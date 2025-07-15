@@ -2,7 +2,6 @@ alembic==1.14.1
 annotated-types==0.7.0
 anyio==4.5.2
 appdirs==1.4.3
-apturl==0.5.2
 async-timeout==5.0.1
 asyncpg==0.30.0
 autocommand==2.2.2

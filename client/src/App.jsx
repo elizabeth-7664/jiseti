@@ -1,26 +1,26 @@
-import axios  from 'axios'
-import { useEffect, useState } from 'react'
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 function App() {
-  const [data, setData] = useState(null)
+  const [message, setMessage] = useState("");
 
-  useEffect(()=>{
-    axios.get(`${import.meta.env.VITE_API_URL}/your-endpoint`)
-     .then(response =>{
-      setData(response.data)
-     })
-     .catch(error=>{
-      console.error("Error fetching data.", error)
-     })
-  },[])
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/`)
+      .then((response) => {
+        setMessage(response.data.message);
+      })
+      .catch((error) => {
+        console.error("Error fetching data.", error);
+      });
+  }, []);
 
-  return(
+  return (
     <div>
       <h1>Jiseti</h1>
-      <p>API says: {message}</p>
+      <p>API says: {message || "Loading..."}</p>
     </div>
-  )
-
+  );
 }
 
-export default App
+export default App;

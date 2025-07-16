@@ -2,7 +2,7 @@ name: Jiseti CI Pipeline
 
 on:
   push:
-    branches: [main, backend-setup, yvonne, williams]
+    branches: [main, backend-setup, yvonne, william,loki]
   pull_request:
     branches: [main]
 

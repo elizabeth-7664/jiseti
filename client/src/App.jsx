@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
+import LandingPage from './pages/LandingPage';
 
 function App() {
   const [message, setMessage] = useState("");
@@ -15,11 +17,15 @@ function App() {
       });
   }, []);
 
+
   return (
-    <div>
-      <h1>Jiseti</h1>
-      <p>API says: {message || "Loading..."}</p>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage/>}/>
+        {/* <Route path="/sign_in" element={<SignIn/>}/>
+        <Route path="/sign_up" element={<SignUp/>}/> */}
+      </Routes>
+    </Router>
   );
 }
 

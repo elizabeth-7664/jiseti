@@ -1,19 +1,29 @@
 import os
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from dotenv import load_dotenv
+
+load_dotenv()
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = os.getenv("MAIL_USERNAME"),
-    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD"),
-    MAIL_FROM = os.getenv("MAIL_FROM", "jiseti@example.com"),
-    MAIL_PORT = 2525,
-    MAIL_SERVER = "smtp.mailtrap.io",
-    MAIL_TLS = True,
-    MAIL_SSL = False,
-    USE_CREDENTIALS = True,
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
+    MAIL_FROM=os.getenv("MAIL_FROM"),
+    MAIL_PORT=int(os.getenv("MAIL_PORT")),
+    MAIL_SERVER=os.getenv("MAIL_SERVER"),
+    MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME"),
+    MAIL_STARTTLS=os.getenv("MAIL_STARTTLS") == "True",
+    MAIL_SSL_TLS=os.getenv("MAIL_SSL_TLS") == "True",
+    USE_CREDENTIALS=os.getenv("USE_CREDENTIALS") == "True",
+    VALIDATE_CERTS=os.getenv("VALIDATE_CERTS") == "True"
 )
 
-async def send_verification_email(email: str, username: str, token: str):
-    html = f"<p>Hi {username},</p><p>Click <a href='{os.getenv('FRONTEND_URL')}/verify?token={token}'>here</a> to verify your email.</p>"
-    message = MessageSchema(subject="Verify your Jiseti account", recipients=[email], html=html)
+async def send_email(subject: str, email_to: str, body: str):
+    message = MessageSchema(
+        subject=subject,
+        recipients=[email_to],
+        body=body,
+        subtype="html"
+    )
+
     fm = FastMail(conf)
     await fm.send_message(message)

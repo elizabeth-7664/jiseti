@@ -30,7 +30,7 @@
 }
 
 .form button {
-  background-color: #00ff40ec;
+  background-color: #01cc12f3;
   color: white;
   padding: 12px;
   border: none;
@@ -39,7 +39,7 @@
 }
 
 .form button:hover {
-  background-color: #00b30f;
+  background-color: #00910c;
 }
 
 .redirect-text {

@@ -1,11 +1,14 @@
 import React from "react";
-import { Link } from 'react-router-dom';
 
-function Buttons(prop){
-
-    return(
-        <button><Link>{prop.button}</Link></button>
-    )
+function Buttons({ button, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-200"
+    >
+      {button}
+    </button>
+  );
 }
 
-export default Buttons
+export default Buttons;

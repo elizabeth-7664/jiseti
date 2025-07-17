@@ -4,7 +4,7 @@ import Buttons from "../components/Buttons";
 
 function LandingPage(){
     const navigate = useNavigate();
-    
+
     return(
         <div className="main">
             <h1>Jiseti</h1>

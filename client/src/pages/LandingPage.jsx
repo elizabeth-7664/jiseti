@@ -1,6 +1,7 @@
 import React from "react";
-import { useNavigate } from 'react-router-dom';
+import {Link,useNavigate } from 'react-router-dom';
 import Buttons from "../components/Buttons";
+
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ function LandingPage() {
         <div className="flex justify-center gap-6">
           <Buttons button="Sign In" onClick={() => navigate('/sign_in')} />
           <Buttons button="Sign Up" onClick={() => navigate('/sign_up')} />
+
         </div>
       </div>
     </div>

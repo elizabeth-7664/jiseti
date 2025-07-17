@@ -3,9 +3,6 @@ name: Jiseti CI Pipeline
 on:
   push:
     branches: [main, backend-setup, yvonne, william,loki]
-  pull_request:
-    branches: [main]
-
 jobs:
   server:
     name: FastAPI Server

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { useNavigate } from "react-router-dom";
+import './Sign_up.css';
 
 function Sign_up(){
     const [name, setName] = useState("");
@@ -17,9 +17,9 @@ function Sign_up(){
     }
 
     return(
-        <div>
+        <div className="container">
             <h2>Create an account</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="form">
                 <label>Username</label>
                 <input type="text" placeholder="e.g. matrix_label" value={name} onChange={(e)=> setName(e.target.value)} required />
 
@@ -35,7 +35,7 @@ function Sign_up(){
                 <button type="submit">Sign Up</button>
             </form>
             
-            <p>Already have an account? <a href="/sign_in">Sign In</a></p>
+            <p className="redirect-text">Already have an account? <a href="/sign_in">Sign In</a></p>
         </div>
     )
 }

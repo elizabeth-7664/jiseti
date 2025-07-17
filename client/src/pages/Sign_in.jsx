@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import './Sign_in.css'
 
 function Sign_in(){
     const [email, setEmail]= useState("");
@@ -9,9 +10,9 @@ function Sign_in(){
     }
 
     return(
-        <div>
+        <div className="container">
             <h2>Login to Jiseti</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="form">
                 <label>Email</label>
                 <input type="text" placeholder="e.g. example@gmail.com" value={email} onChange={(e)=> setEmail(e.target.value)} required />
 
@@ -21,7 +22,7 @@ function Sign_in(){
                 <button type="submit">Sign In</button>
             </form>
             
-            <p>Don't have an account? <a href="/sign_up">Sign Up</a></p>
+            <p className="redirect-text">Don't have an account? <a href="/sign_up">Sign Up</a></p>
         </div>
     )
 

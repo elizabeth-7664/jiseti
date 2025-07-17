@@ -5,7 +5,6 @@ import LandingPage from './pages/LandingPage';
 import Sign_up from './pages/Sign_up';
 import Sign_in from './pages/Sign_in';
 
-
 function App() {
   // const [message, setMessage] = useState("");
 

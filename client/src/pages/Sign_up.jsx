@@ -24,7 +24,7 @@ function Sign_up(){
         }
         setLoading(true);
         try{
-            await API.post('/api/register', {name, email, password});
+            await API.post('/api/register', {username, email, password});
             navigate('/sign_in', {state: {message: 'Registration successful! Proceed to Login.'}});
 
         }catch (err) {

@@ -4,6 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import timedelta
 from sqlalchemy import text
+from app.db import async_engine
+
 
 from app.core.config.settings import settings
 from app.core.security import (

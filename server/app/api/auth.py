@@ -3,8 +3,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import timedelta
+from sqlalchemy import text
 
-from app.core.config import settings
+from app.core.config.settings import settings
 from app.core.security import (
     create_access_token,
     create_verify_token,
@@ -36,7 +37,7 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     await db.commit()
     await db.refresh(new_user)
 
-    # Email verification
+    
     token = create_verify_token(user.email)
     verify_url = f"http://localhost:8000/api/verify-email?token={token}"
 
@@ -121,3 +122,12 @@ async def reset_password(token: str, new_password: str, db: AsyncSession = Depen
     await db.commit()
 
     return {"msg": "Password reset successful"}
+
+@router.get("/check-db")
+async def check_db_connection():
+    try:
+        async with AsyncSession(bind=async_engine) as session:
+            await session.execute(text("SELECT 1"))
+        return {"connected": True}
+    except Exception as e:
+        return {"connected": False, "error": str(e)}

@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.auth import router as auth_router
+
+
 import os
 from dotenv import load_dotenv
 
@@ -34,3 +37,6 @@ async def test_email():
         return {"status": "Email sent successfully"}
     except Exception as e:
         return {"error": str(e)}
+    
+app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
+

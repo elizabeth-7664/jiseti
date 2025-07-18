@@ -5,13 +5,14 @@ import {useNavigate, Link} from 'react-router-dom';
 
 
 function Sign_up(){
-    const [name, setName] = useState("");
+    const [username, setUsername] = useState("");
     const [email, setEmail]= useState("");
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
+
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -23,7 +24,7 @@ function Sign_up(){
         }
         setLoading(true);
         try{
-            await API.post('/api/register', {name, email, password});
+            await API.post('/api/register', {username, email, password});
             navigate('/sign_in', {state: {message: 'Registration successful! Proceed to Login.'}});
 
         }catch (err) {
@@ -43,7 +44,7 @@ function Sign_up(){
 
             <form onSubmit={handleSubmit} className="form">
                 <label>Username</label>
-                <input type="text" placeholder="e.g. matrix_label" value={name} onChange={(e)=> setName(e.target.value)} required />
+                <input type="text" placeholder="e.g. matrix_label" value={username} onChange={(e)=> setUsername(e.target.value)} required />
 
                 <label>Email</label>
                 <input type="email" placeholder="e.g. example@gmail.com" value={email} onChange={(e)=> setEmail(e.target.value)} required />

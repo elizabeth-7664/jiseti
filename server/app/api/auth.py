@@ -5,6 +5,8 @@ from sqlalchemy.future import select
 from datetime import timedelta
 from sqlalchemy import text
 from app.db import get_db, async_engine
+from sqlalchemy.orm import Session
+
 
 from app.core.config.settings import settings
 from app.core.security import (
@@ -51,21 +53,36 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     return {"msg": "User registered successfully. Check your email to verify."}
 
 
-@router.get("/verify-email")
-async def verify_email(token: str, db: AsyncSession = Depends(get_db)):
-    try:
-        email = confirm_verify_token(token)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
+# @router.get("/verify-email")
+# async def verify_email(token: str, db: AsyncSession = Depends(get_db)):
+#     try:
+#         email = confirm_verify_token(token)
+#     except Exception:
+#         raise HTTPException(status_code=400, detail="Invalid or expired token")
 
-    result = await db.execute(select(User).where(User.email == email))
-    user = result.scalars().first()
+#     result = await db.execute(select(User).where(User.email == email))
+#     user = result.scalars().first()
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
+
+#     user.is_verified = True
+#     await db.commit()
+#     return {"msg": "Email verified successfully"}
+
+@router.get("/verify-email")
+async def verify_email(token: str, db: Session = Depends(get_db)):
+    email = verify_email_token(token)
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    
+    user = get_user_by_email(db, email)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-
+    
     user.is_verified = True
-    await db.commit()
-    return {"msg": "Email verified successfully"}
+    db.commit()
+    
+    return {"msg": "Email verified successfully."}
 
 
 @router.post("/login")

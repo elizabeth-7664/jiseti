@@ -12,7 +12,7 @@ from app.utils.email_utils import send_email
 app = FastAPI()
 
 # CORS configuration
-origins = [os.getenv("FRONTEND_URL", "http://localhost:5173")]
+origins = [os.getenv("FRONTEND_URL")]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -38,4 +38,3 @@ async def test_email():
         return {"error": str(e)}
     
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
-

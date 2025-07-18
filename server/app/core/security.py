@@ -44,7 +44,7 @@ def decode_access_token(token: str) -> dict:
 # =================== Verification Token ===================
 
 def create_verify_token(email: str, expires_delta: Optional[timedelta] = None) -> str:
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))  # for email verification
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))  
     to_encode = {"sub": email, "exp": expire}
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 

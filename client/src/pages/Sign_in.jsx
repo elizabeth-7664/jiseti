@@ -8,10 +8,19 @@ function Sign_in(){
     async function handleSubmit(e){
         e.preventDefault();
 
-        if (password !== confirmPassword) {
-            alert('Passwords do not match');
-            return;
+        try{
+            const response= await api.post(`${import.meta.env.VITE_API_URL}/login`,{
+                username,
+                email,
+                password
+            })
+            navigate('/')
+            
+        }catch(error){
+            console.error("Signin Failed", error.response?.data || error.message);
+            alert("Signin Failed")
         }
+
        
     };
 

@@ -6,8 +6,14 @@ function Sign_in(){
     const [password, setPassword] = useState("")
 
     async function handleSubmit(e){
-        e.preventDefault()
-    }
+        e.preventDefault();
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+       
+    };
 
     return(
         <div className="container">

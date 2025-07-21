@@ -4,10 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import timedelta
 from sqlalchemy import text
-from app.db import get_db, async_engine
-from sqlalchemy.orm import Session
-
-
+from app.db import get_db, async_engine, 
 from app.core.config.settings import settings
 from app.core.security import (
     create_access_token,
@@ -16,7 +13,6 @@ from app.core.security import (
     get_password_hash,
     verify_password
 )
-from app.db import get_db
 from app.schemas.user import UserCreate
 from app.models.user import User
 from app.utils.email_utils import send_email
@@ -34,7 +30,7 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Email already registered")
 
     hashed_password = get_password_hash(user.password)
-    new_user = User(email=user.email, username=user.username, hashed_password=hashed_password, is_verified=False)
+    new_user = User(username=user.username,email=user.email, hashed_password=hashed_password, is_verified=False)
 
     db.add(new_user)
     await db.commit()

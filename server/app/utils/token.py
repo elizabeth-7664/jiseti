@@ -1,13 +1,18 @@
-from itsdangerous import URLSafeTimedSerializer
-from app.core.config.settings import settings
-serializer = URLSafeTimedSerializer(settings.SECRET_KEY)
+from datetime import datetime, timedelta
+from jose import jwt, JWTError
 
-def generate_email_token(email: str) -> str:
-    return serializer.dumps(email, salt="email-confirm")
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = "HS256"
+EXPIRE_MINUTES = 60 * 24  # 1 day
 
-def verify_email_token(token: str, max_age: int = 3600) -> str:
+def create_verify_token(email: str):
+    expire = datetime.utcnow() + timedelta(minutes=EXPIRE_MINUTES)
+    to_encode = {"sub": email, "exp": expire}
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def confirm_verify_token(token: str):
     try:
-        email = serializer.loads(token, salt="email-confirm", max_age=max_age)
-        return email
-    except Exception:
-        return None
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload.get("sub")
+    except JWTError:
+        raise Exception("Token invalid or expired")

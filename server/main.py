@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.auth import router as auth_router
-from app.models import user, report
+from app.models import * 
+
 import os
 from dotenv import load_dotenv
 

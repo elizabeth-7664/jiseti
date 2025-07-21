@@ -11,10 +11,10 @@ conf = ConnectionConfig(
     MAIL_PORT=int(os.getenv("MAIL_PORT")),
     MAIL_SERVER=os.getenv("MAIL_SERVER"),
     MAIL_FROM_NAME=os.getenv("MAIL_FROM_NAME"),
-    MAIL_STARTTLS=os.getenv("MAIL_STARTTLS") == "True",
-    MAIL_SSL_TLS=os.getenv("MAIL_SSL_TLS") == "True",
-    USE_CREDENTIALS=os.getenv("USE_CREDENTIALS") == "True",
-    VALIDATE_CERTS=os.getenv("VALIDATE_CERTS") == "True"
+    MAIL_STARTTLS=os.getenv("MAIL_STARTTLS", "False") == "True",
+    MAIL_SSL_TLS=os.getenv("MAIL_SSL_TLS", "False") == "True",
+    USE_CREDENTIALS=os.getenv("USE_CREDENTIALS", "True") == "True",
+    VALIDATE_CERTS=os.getenv("VALIDATE_CERTS", "True") == "True"
 )
 
 async def send_email(subject: str, email_to: str, body: str):

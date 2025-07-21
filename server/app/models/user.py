@@ -20,7 +20,7 @@ class User(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.utcnow)
 
     # # ✅ Relationships with corrected typing
-    # reports: Mapped[List["Report"]] = relationship("Report", back_populates="author", cascade="all, delete")
+    # posts: Mapped[List["Report"]] = relationship("Report", back_populates="author", cascade="all, delete")
     # comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="user", cascade="all, delete")
     # donations: Mapped[List["Donation"]] = relationship("Donation", back_populates="user", cascade="all, delete")
     # notifications: Mapped[List["Notification"]] = relationship("Notification", back_populates="user", cascade="all, delete")

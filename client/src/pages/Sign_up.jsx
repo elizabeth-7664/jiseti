@@ -25,7 +25,9 @@ function Sign_up(){
         setLoading(true);
         try{
             await API.post('/api/register', {username, email, password});
-            navigate('/sign_in', {state: {message: 'Registration successful! Proceed to Login.'}});
+            // login user immediately
+            const loginRes = await API.post('login',{email, password})
+            navigate('/', {state: {message: 'Registration successful! Proceed to Login.'}});
 
         }catch (err) {
             console.error('Error:', err);

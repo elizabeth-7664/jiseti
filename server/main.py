@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.auth import router as auth_router
 from app.api.admin import admin
+from app.api.comments import router as comment_router
+
 from app.models import * 
 
 
@@ -42,4 +44,5 @@ async def test_email():
     
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(admin)
+app.include_router(comment_router)
 

@@ -3,8 +3,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 
 from app.db import Base
-from models.user import User
-from models.report import Report
+from app.models.user import User
+from app.models.report import Report
 
 
 class Comment(Base):

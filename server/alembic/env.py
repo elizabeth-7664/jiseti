@@ -2,7 +2,7 @@ from logging.config import fileConfig
 from sqlalchemy import create_engine
 from sqlalchemy import pool
 from alembic import context
-from app.models import user
+from app import models
 
 import sys
 import os
@@ -20,7 +20,6 @@ config = context.config
 
 sync_url = settings.DATABASE_URL.replace("postgresql+asyncpg", "postgresql")
 config.set_main_option("sqlalchemy.url", sync_url)
-
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)

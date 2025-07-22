@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import timedelta
 from sqlalchemy import text
-from app.db import get_db, async_engine, 
+from app.db import get_db, async_engine
 from app.core.config.settings import settings
 from app.core.security import (
     create_access_token,
@@ -65,20 +65,20 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
 #     await db.commit()
 #     return {"msg": "Email verified successfully"}
 
-@router.get("/verify-email")
-async def verify_email(token: str, db: Session = Depends(get_db)):
-    email = verify_email_token(token)
-    if not email:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
+# @router.get("/verify-email")
+# async def verify_email(token: str, db: Session = Depends(get_db)):
+#     email = verify_email_token(token)
+#     if not email:
+#         raise HTTPException(status_code=400, detail="Invalid or expired token")
     
-    user = get_user_by_email(db, email)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+#     user = get_user_by_email(db, email)
+#     if not user:
+#         raise HTTPException(status_code=404, detail="User not found")
     
-    user.is_verified = True
-    db.commit()
+#     user.is_verified = True
+#     db.commit()
     
-    return {"msg": "Email verified successfully."}
+#     return {"msg": "Email verified successfully."}
 
 
 @router.post("/login")

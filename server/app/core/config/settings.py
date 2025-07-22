@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     VALIDATE_CERTS: bool
 
     class Config:
-        extra = Extra.forbid  # stricter: fails on unknown vars; use `allow` for development only
+        extra = Extra.forbid  
         env_file = ".env"
 
 settings = Settings()

@@ -11,7 +11,7 @@ from typing import List
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
-# Optional helper to check if the current user is admin
+
 async def get_admin_user(current_user_email: str = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == current_user_email))
     user = result.scalars().first()

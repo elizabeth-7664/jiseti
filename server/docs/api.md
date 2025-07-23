@@ -1,6 +1,6 @@
-#  Jiseti API Endpoints
+# Jiseti API Endpoints
 
-##  User Endpoints
+## User Endpoints
 
 ### POST /register
 - Create a new user
@@ -11,7 +11,7 @@
   "password": "secret123"
 }
 
-    Returns:
+Returns:
 
 {
   "message": "User created. Please verify your email."
@@ -20,7 +20,6 @@
 POST /login
 
     Authenticates user, returns access token
-
     Body:
 
 {
@@ -31,25 +30,27 @@ POST /login
 GET /me
 
     Get current user details (JWT required)
-
     Headers:
 
 Authorization: Bearer <token>
 
- Post/Report Endpoints (Planned)
-POST /posts
+Post/Report Endpoints (Planned)
 
-    Create a new public issue or post
+    POST /posts – Create a new public issue or post
 
-PATCH /posts/{id}
+    PATCH /posts/{id} – Update or mark as solved
 
-    Update or mark as solved
+    DELETE /posts/{id} – Delete post by author or admin
 
-DELETE /posts/{id}
+Comment Endpoints 
 
-    Delete post by author or admin
+    POST /comments – Add a comment to a post
 
- Notifications (Planned)
+    GET /comments/post/{post_id} – Get all comments for a post
+
+    DELETE /comments/{id} – Delete own comment or by admin
+
+Notifications (Planned)
 
     Notify users when:
 
@@ -57,33 +58,8 @@ DELETE /posts/{id}
 
         Someone comments or donates
 
+Media Upload (Planned)
 
----
+    Allow attaching images/media to a post
 
-##  `docs/roadmap.md`
-
-```markdown
-# Jiseti Roadmap – The Road So Far
-
-## Completed
-- Set up FastAPI backend
-- Created `User` model with:
-  - Email
-  - Password (hashed)
-  - Is_verified
-  - UUID
-- Created authentication routes:
-  - /register (with email verification logic)
-  - /login (returns JWT)
-- JWT & OAuth2 login
-- Email verification logic with token
-- Refactored using SQLAlchemy `Base`, `Session`, and `models/`
-- Started initial planning and documentation structure
-
-##  Upcoming
-- Add `Post` model (issue reports)
-- Add endpoints for creating/viewing posts
-- Setup frontend directory (Vite + React)
-- Enable CORS and connect backend/frontend
-- Add donation model (optional)
-- Set up notifications system (optional)
+    Store file metadata in DB and link to post

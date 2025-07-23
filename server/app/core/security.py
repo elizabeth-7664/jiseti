@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.future import select
 
@@ -75,3 +75,11 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         if not user or not user.is_verified:
             raise HTTPException(status_code=401, detail="Unauthorized")
         return user
+async def get_admin_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    user = await get_current_user(credentials)
+    if not user.is_admin:  # or use `user.role != "admin"` if you use roles
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access only"
+        )
+    return user

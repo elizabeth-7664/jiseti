@@ -16,6 +16,7 @@ class Report(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     category: Mapped[str] = mapped_column(String(50), nullable=False)
+    location: Mapped[str] = mapped_column(String(255), nullable=False)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
     latitude: Mapped[float] = mapped_column(Float, nullable=False)

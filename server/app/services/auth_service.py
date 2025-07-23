@@ -1,5 +1,6 @@
+# app/services/auth_service.py
+
 from fastapi import HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import timedelta
@@ -16,17 +17,11 @@ from app.core.config.settings import settings
 from sqlalchemy import text
 from app.db import async_engine
 
+
 async def register_user(user: UserCreate, db: AsyncSession):
-   # Check for duplicate email
-    result = await db.execute(select(User).where(User.email == user.email))
-    if result.scalars().first():
+    existing_user = await db.execute(select(User).where(User.email == user.email))
+    if existing_user.scalars().first():
         raise HTTPException(status_code=400, detail="Email already registered")
-
-    # Check for duplicate username
-    result = await db.execute(select(User).where(User.username == user.username))
-    if result.scalars().first():
-        raise HTTPException(status_code=400, detail="Username already taken")
-
 
     hashed_password = get_password_hash(user.password)
     new_user = User(
@@ -35,30 +30,44 @@ async def register_user(user: UserCreate, db: AsyncSession):
         hashed_password=hashed_password,
         is_verified=False
     )
-
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
 
-    return {"message": "User registered successfully", "user_id": new_user.id}
+    token = create_verify_token(user.email)
+    verify_url = f"http://localhost:8000/api/verify-email?token={token}"
+    await send_email(
+        email_to=user.email,
+        subject="Verify Your Email",
+        body=f"<p>Click to verify: <a href='{verify_url}'>Verify</a></p>"
+    )
+    return {"msg": "User registered. Check email to verify."}
 
+async def verify_user_email(token: str, db: AsyncSession):
+    try:
+        email = confirm_verify_token(token)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
 
-async def login_user(form_data: OAuth2PasswordRequestForm, db: AsyncSession):
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalars().first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.is_verified = True
+    await db.commit()
+    return {"msg": "Email verified successfully"}
+
+async def login_user(form_data, db: AsyncSession):
     result = await db.execute(select(User).where(User.email == form_data.username))
     user = result.scalars().first()
-
     if not user or not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect credentials"
-        )
-
-    # Email verification check temporarily removed
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect credentials")
+    if not user.is_verified:
+        raise HTTPException(status_code=403, detail="Email not verified")
 
     token = create_access_token(data={"sub": user.email})
-    return {"access_token": token, 
-            "token_type": "bearer"}
-
+    return {"access_token": token, "token_type": "bearer"}
 
 async def send_password_reset_email(email: str, db: AsyncSession):
     result = await db.execute(select(User).where(User.email == email))
@@ -67,7 +76,7 @@ async def send_password_reset_email(email: str, db: AsyncSession):
         raise HTTPException(status_code=404, detail="Email not found")
 
     token = create_access_token(data={"sub": user.email}, expires_delta=timedelta(hours=1))
-    reset_url = reset_url = f"{settings.FRONTEND_URL}/reset-password?token={token}"
+    reset_url = f"http://localhost:8000/api/reset-password?token={token}"
     await send_email(
         email_to=user.email,
         subject="Reset Password",
@@ -91,7 +100,6 @@ async def reset_user_password(token: str, new_password: str, db: AsyncSession):
 
     user.hashed_password = get_password_hash(new_password)
     await db.commit()
-    await db.refresh(user)
     return {"msg": "Password reset successful"}
 
 async def check_db_status():

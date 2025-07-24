@@ -81,11 +81,11 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
 
-    if not user.is_verified:
-        raise HTTPException(status_code=403, detail="Email not verified")
+    # if not user.is_verified:
+    #     raise HTTPException(status_code=403, detail="Email not verified")
 
     access_token = create_access_token(data={"sub": user.email})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "username":user.username}
 
 
 @router.post("/forgot-password")

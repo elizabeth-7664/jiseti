@@ -24,16 +24,34 @@ function Sign_up(){
         }
         setLoading(true);
         try{
-            await API.post('/api/register', {username, email, password});
+            await API.post('/api/auth/register', {username, email, password});
+
             // login user immediately
-            const loginRes = await API.post('login',{email, password})
-            navigate('/', {state: {message: 'Registration successful! Proceed to Login.'}});
+            const formData = new URLSearchParams();
+            formData.append("username", email);
+            formData.append("password", password);
+
+            const loginRes = await API.post('/api/auth/login', formData, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+
+            const {access_token, user} = loginRes.data;
+
+            login(loginRes.data);
+            navigate('/login', {state: {message: 'Registration successful! Please verify your email before logging in.'}});
 
         }catch (err) {
             console.error('Error:', err);
-            const errorMessage = err.response?.data.detail || 'Registration failed. Please try again.';
-            setError(errorMessage);
-            
+
+            if (err.response?.status === 403) {
+                setError("Please verify your email before logging in.");
+            } else if (err.response?.status === 401) {
+                setError("Invalid credentials. Please try again.");
+            } else {
+                setError("Login failed. Try again.");
+            }
         }finally {
             setLoading(false);
         }
@@ -42,7 +60,7 @@ function Sign_up(){
     return(
         <div className="container">
             <h2>Create an account</h2>
-            {error && <p className="error-message">{error}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <form onSubmit={handleSubmit} className="form">
                 <label>Username</label>

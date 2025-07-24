@@ -19,7 +19,7 @@ async def test_register_user(async_client: AsyncClient):
             "password": "strongpassword"
         }
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
 
 @pytest.mark.asyncio
 async def test_verify_user_email(async_client: AsyncClient):

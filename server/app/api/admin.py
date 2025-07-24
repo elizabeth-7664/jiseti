@@ -13,7 +13,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 
 
 async def get_admin_user(current_user_email: str = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).where(User.email == current_user_email))
+    result = await db.execute(select(User).where(User.email == current_user_email.email))
     user = result.scalars().first()
     if not user or not user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")

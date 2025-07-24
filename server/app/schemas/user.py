@@ -26,7 +26,7 @@ class UserOut(BaseModel):
     avatar: Optional[str] = None
     is_verified: bool
     is_admin: bool
-    streak: int
+    
 
     class Config:
         from_attributes = True

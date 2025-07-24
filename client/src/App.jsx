@@ -4,7 +4,6 @@ import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
 import LandingPage from './pages/LandingPage';
 import Sign_up from './pages/Sign_up';
 import Sign_in from './pages/Sign_in';
-import Dashboard from './pages/Dashboard';
 
 function App() {
   // const [message, setMessage] = useState("");
@@ -27,7 +26,6 @@ function App() {
         <Route path="/" element={<LandingPage/>}/>
         <Route path="/sign_in" element={<Sign_in/>}/>
         <Route path="/sign_up" element={<Sign_up/>}/>
-        <Route path="/home" element={<Dashboard/>}/>
       </Routes>
     </Router>
   );

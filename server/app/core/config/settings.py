@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 class Settings(BaseSettings):
     DATABASE_URL: str
     SECRET_KEY: str = "your_default_secret"
+    ALGORITHM: str = "HS256"
 
     FRONTEND_URL: str
     MAIL_USERNAME: str

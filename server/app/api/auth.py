@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
+from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import timedelta
@@ -14,17 +16,23 @@ from app.core.security import (
     verify_password
 )
 from app.db import get_db
+from app.services.auth_service import register_user, login_user
 from app.schemas.user import UserCreate
-from app.models.user import User
-from app.utils.email_utils import send_email
 
-from pydantic import EmailStr
-from jose import JWTError, jwt
+from app.services.auth_service import (
+    register_user,
+    verify_user_email,
+    login_user,
+    send_password_reset_email,
+    reset_user_password,
+    check_db_status
+)
 
 router = APIRouter(tags=["Authentication"])
 
 @router.post("/register")
 async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
+    return await register_user(user, db)
     result = await db.execute(select(User).where(User.email == user.email))
     existing_user = result.scalars().first()
     if existing_user:
@@ -58,23 +66,11 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
 
 @router.get("/verify-email")
 async def verify_email(token: str, db: AsyncSession = Depends(get_db)):
-    try:
-        email = confirm_verify_token(token)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
-
-    result = await db.execute(select(User).where(User.email == email))
-    user = result.scalars().first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    user.is_verified = True
-    await db.commit()
-    return {"msg": "Email verified successfully"}
-
+    return await verify_user_email(token, db)
 
 @router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+    return await login_user(form_data, db)
     result = await db.execute(select(User).where(User.email == form_data.username))
     user = result.scalars().first()
 
@@ -90,50 +86,12 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
 
 @router.post("/forgot-password")
 async def forgot_password(email: EmailStr, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).where(User.email == email))
-    user = result.scalars().first()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="Email not found")
-
-    reset_token = create_access_token(data={"sub": user.email}, expires_delta=timedelta(hours=1))
-
-    reset_url = f"http://localhost:8000/api/reset-password?token={reset_token}"
-    await send_email(
-        email_to=user.email,
-        subject="Reset Your Password",
-        body=f"<p>Click the link below to reset your password:<br><a href='{reset_url}'>Reset Password</a></p>"
-    )
-
-    return {"msg": "Reset link sent to email"}
-
+    return await send_password_reset_email(email, db)
 
 @router.post("/reset-password")
 async def reset_password(token: str, new_password: str, db: AsyncSession = Depends(get_db)):
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        email = payload.get("sub")
-        if not email:
-            raise HTTPException(status_code=400, detail="Invalid token")
-    except JWTError:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
-
-    result = await db.execute(select(User).where(User.email == email))
-    user = result.scalars().first()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    user.hashed_password = get_password_hash(new_password)
-    await db.commit()
-
-    return {"msg": "Password reset successful"}
+    return await reset_user_password(token, new_password, db)
 
 @router.get("/check-db")
 async def check_db_connection():
-    try:
-        async with AsyncSession(bind=async_engine) as session:
-            await session.execute(text("SELECT 1"))
-        return {"connected": True}
-    except Exception as e:
-        return {"connected": False, "error": str(e)}
+    return await check_db_status()

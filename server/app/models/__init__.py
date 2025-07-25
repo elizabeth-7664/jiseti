@@ -1,4 +1,5 @@
 from .user import User
-# Add others as you create them, e.g.:
-# from .role import Role
-# from .post import Post
+from .report import Report
+from .comment import Comment
+from .notification import Notification
+

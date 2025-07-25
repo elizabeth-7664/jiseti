@@ -7,6 +7,7 @@ from ..core.security import get_current_user
 from ..models.user import User
 from ..schemas.user import UserOut as UserSchema
 from typing import List
+from uuid import UUID
 
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -33,7 +34,7 @@ async def list_all_users(
 
 @router.delete("/users/{user_id}")
 async def delete_user(
-    user_id: int,
+    user_id: UUID,
     db: AsyncSession = Depends(get_db),
     admin_user: User = Depends(get_admin_user)
 ):

@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from sqlalchemy.ext.asyncio import create_async_engine
+from pydantic import Extra  # Required if you use Extra.forbid
 
 class Settings(BaseSettings):
     DATABASE_URL: str
@@ -22,9 +23,7 @@ class Settings(BaseSettings):
         "extra": "forbid",
         "env_file": ".env"
     }
-
 settings = Settings()
 engine = create_async_engine(settings.DATABASE_URL, echo=True)
 
 print("Loaded settings:", settings.model_dump())
-

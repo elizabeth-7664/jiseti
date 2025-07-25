@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
@@ -18,7 +19,15 @@ from app.core.security import (
 from app.db import get_db
 from app.services.auth_service import register_user, login_user
 from app.schemas.user import UserCreate
+=======
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import EmailStr
+>>>>>>> 2bc4c52b457ac0b033ce395bf32d35cb429362a4
 
+from app.db import get_db
+from app.schemas.user import UserCreate
 from app.services.auth_service import (
     register_user,
     verify_user_email,
@@ -29,6 +38,7 @@ from app.services.auth_service import (
 )
 
 router = APIRouter(tags=["Authentication"])
+
 
 @router.post("/register")
 async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
@@ -68,6 +78,7 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
 async def verify_email(token: str, db: AsyncSession = Depends(get_db)):
     return await verify_user_email(token, db)
 
+
 @router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
     return await login_user(form_data, db)
@@ -88,9 +99,11 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
 async def forgot_password(email: EmailStr, db: AsyncSession = Depends(get_db)):
     return await send_password_reset_email(email, db)
 
+
 @router.post("/reset-password")
 async def reset_password(token: str, new_password: str, db: AsyncSession = Depends(get_db)):
     return await reset_user_password(token, new_password, db)
+
 
 @router.get("/check-db")
 async def check_db_connection():

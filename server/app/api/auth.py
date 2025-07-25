@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordRequestForm
@@ -19,13 +18,8 @@ from app.core.security import (
 from app.db import get_db
 from app.services.auth_service import register_user, login_user
 from app.schemas.user import UserCreate
-=======
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import EmailStr
->>>>>>> 2bc4c52b457ac0b033ce395bf32d35cb429362a4
-
 from app.db import get_db
 from app.schemas.user import UserCreate
 from app.services.auth_service import (

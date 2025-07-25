@@ -37,3 +37,8 @@ class User(Base):
         cascade="all, delete",
         foreign_keys="Comment.created_by"
     )
+
+    notifications: Mapped[List["Notification"]] = relationship(
+    "Notification", back_populates="user", cascade="all, delete-orphan"
+   )
+

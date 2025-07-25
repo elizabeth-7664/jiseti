@@ -34,4 +34,7 @@ class Report(Base):
     author: Mapped["User"] = relationship("User", back_populates="posts")
 
     comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="report", cascade="all, delete")
+    notifications: Mapped[List["Notification"]] = relationship(
+    "Notification", back_populates="report", cascade="all, delete-orphan")
+
     # media: Mapped[List["Media"]] = relationship("Media", back_populates="report", cascade="all, delete")

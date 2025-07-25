@@ -3,38 +3,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.db import get_db
-from ..core.security import get_current_user
+from ..core.security import get_current_user, hash_password
 from ..models.user import User
 from ..schemas.user import User as UserSchema, UserUpdate
 
-router = APIRouter(tags=["users"])
+router = APIRouter(tags=["Users"])
 
 @router.get("/users/me", response_model=UserSchema)
-async def read_users_me(
-    current_user: str = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-):
-    """
-    Retrieve the current authenticated user's details.
-    """
-    result = await db.execute(select(User).where(User.email == current_user))
-    user = result.scalars().first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-
-@router.get("/users/{id}", response_model=UserSchema)
-async def read_user(
-    id: int,
+async def read_current_user(
     db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user)
+    current_user_email: str = Depends(get_current_user)
 ):
     """
-    Retrieve a user by ID (admin-only, placeholder for role check).
+    Retrieve the currently authenticated user's profile using their email.
     """
-    # Placeholder for admin role check
-    result = await db.execute(select(User).where(User.id == id))
+    result = await db.execute(select(User).where(User.email == current_user_email))
     user = result.scalars().first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -42,28 +25,44 @@ async def read_user(
 
 
 @router.put("/users/me", response_model=UserSchema)
-async def update_user_me(
+async def update_current_user(
     updates: UserUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: str = Depends(get_current_user)
+    current_user_email: str = Depends(get_current_user)
 ):
     """
-    Update the current user's profile.
+    Allow a user to update their own profile.
     """
-    result = await db.execute(select(User).where(User.email == current_user))
+    result = await db.execute(select(User).where(User.email == current_user_email))
     user = result.scalars().first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    if updates.username:
+    if updates.username is not None:
         user.username = updates.username
-    if updates.avatar:
+    if updates.avatar is not None:
         user.avatar = updates.avatar
-    if updates.password:
-        from ..core.security import hash_password 
+    if updates.password is not None:
         user.password = hash_password(updates.password)
 
     await db.commit()
     await db.refresh(user)
+    return user
 
+
+@router.get("/users/{user_id}", response_model=UserSchema)
+async def read_user_by_id(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user_email: str = Depends(get_current_user),
+):
+    """
+    Admin-only: Retrieve a user by their ID.
+    Role check to be added.
+    """
+    # Placeholder for admin role check (optional logic to be added)
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
     return user

@@ -4,6 +4,7 @@ import datetime
 import uuid
 from typing import List
 
+
 from sqlalchemy import DateTime, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 

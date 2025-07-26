@@ -42,3 +42,8 @@ class User(Base):
     "Notification", back_populates="user", cascade="all, delete-orphan"
    )
 
+    media: Mapped[List["Media"]] = relationship(
+    back_populates="user",
+    cascade="all, delete",
+    lazy="selectin"
+   )

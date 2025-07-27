@@ -4,6 +4,7 @@ import datetime
 import uuid
 from typing import List
 
+
 from sqlalchemy import DateTime, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -21,7 +22,13 @@ class User(Base):
 
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.utcnow)
 
-    # ✅ Relationships
+
+    # # ✅ Relationships with corrected typing
+    # posts: Mapped[List["Report"]] = relationship("Report", back_populates="author", cascade="all, delete")
+    # comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="user", cascade="all, delete")
+    # donations: Mapped[List["Donation"]] = relationship("Donation", back_populates="user", cascade="all, delete")
+    # notifications: Mapped[List["Notification"]] = relationship("Notification", back_populates="user", cascade="all, delete")
+
     posts: Mapped[List["Report"]] = relationship(
         "Report",
         back_populates="author",
@@ -35,15 +42,3 @@ class User(Base):
         foreign_keys="Comment.created_by"
     )
 
-    # Optional: Uncomment or add these if relevant to your app
-    # donations: Mapped[List["Donation"]] = relationship(
-    #     "Donation",
-    #     back_populates="user",
-    #     cascade="all, delete"
-    # )
-
-    # notifications: Mapped[List["Notification"]] = relationship(
-    #     "Notification",
-    #     back_populates="user",
-    #     cascade="all, delete"
-    # )

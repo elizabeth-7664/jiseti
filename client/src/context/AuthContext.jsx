@@ -1,28 +1,44 @@
-import  React ,{ createContext, useContext, useState, useEffect} from 'react';
- export const AuthContext = createContext();
+import  React ,{ createContext, useContext, useState, useEffect, useMemo} from 'react';
 
-export const AuthProvider = ({children}) => {
-    const [user, setUser] = useState(null);
-    useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        if (storedUser?.access_token) {
-            setUser(storedUser);
+export const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser?.access_token) {
+      try {
+        const tokenPayload = JSON.parse(atob(storedUser.access_token.split('.')[1]));
+        const isExpired = tokenPayload.exp * 1000 < Date.now();
+
+        if (!isExpired) {
+          setUser(storedUser);
+        } else {
+          localStorage.removeItem('user');
         }
-    }, []);
-    const login = (data) => {
-        setUser(data);
-        localStorage.setItem('user', JSON.stringify(data));
-    };
-    const logout = () => {
-        setUser(null);
+      } catch {
+        // handle malformed token
         localStorage.removeItem('user');
-    };
-    return (
-        <AuthContext.Provider value= {{ user, login, logout}}>
-            {children}
-        </AuthContext.Provider>
-    );
-}
+      }
+    }
+  }, []);
+
+  const login = (data) => {
+    setUser(data);
+    localStorage.setItem('user', JSON.stringify(data));
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
+
+  const value = useMemo(() => ({ user, login, logout }), [user]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

@@ -26,7 +26,7 @@ class UserOut(BaseModel):
     avatar: Optional[str] = None
     is_verified: bool
     is_admin: bool
-    streak: int
+    
 
     class Config:
         from_attributes = True
@@ -39,5 +39,4 @@ class UserUpdate(BaseModel):
 class FullUser(UserOut):
     posts: Optional[List] = []
     comments: Optional[List] = []
-    donations: Optional[List] = []
     notifications: Optional[List] = []

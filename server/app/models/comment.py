@@ -1,22 +1,22 @@
-from sqlalchemy import Column, Text, ForeignKey
-from sqlalchemy.orm import relationship
+from __future__ import annotations
+
+from datetime import datetime
 from uuid import UUID, uuid4
-from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from sqlalchemy import ForeignKey, Text, DateTime
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from .report import Report
-    from .user import User
 
 class Comment(Base):
     __tablename__ = "comments"
 
-    id = Column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
-    content = Column(Text, nullable=False)
-    report_id = Column(PG_UUID(as_uuid=True), ForeignKey("reports.id"))
-    user_id = Column(PG_UUID(as_uuid=True), ForeignKey("users.id"))
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    content: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    report = relationship("Report", back_populates="comments")
-    user = relationship("User", back_populates="comments")
+    created_by: Mapped[UUID] = mapped_column(ForeignKey("users.id"), nullable=True)
+    report_id: Mapped[UUID] = mapped_column(ForeignKey("reports.id", ondelete="CASCADE"))
+
+    user: Mapped["User"] = relationship(back_populates="comments")
+    report: Mapped["Report"] = relationship(back_populates="comments")

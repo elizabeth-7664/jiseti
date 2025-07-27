@@ -4,11 +4,13 @@ from app.db import Base
 import datetime
 import uuid
 from typing import List
-from .comment import Comment
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from app.models.user import User
+    from app.models.comment import Comment
     from app.models.media import Media
+
 class Report(Base):
     __tablename__ = "reports"
 
@@ -16,15 +18,24 @@ class Report(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     category: Mapped[str] = mapped_column(String(50), nullable=False)
-    location: Mapped[str] = mapped_column(String(255), nullable=False)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     status: Mapped[str] = mapped_column(String(50), default="pending")
     created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow)
-    
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+    default=datetime.datetime.utcnow,
+    onupdate=datetime.datetime.utcnow
+)
+
+
+
     author_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
     author: Mapped["User"] = relationship("User", back_populates="posts")
 
     comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="report", cascade="all, delete")
-    # media: Mapped[List["Media"]] = relationship("Media", back_populates="report", cascade="all, delete")
+    notifications: Mapped[List["Notification"]] = relationship(
+    "Notification", back_populates="report", cascade="all, delete-orphan")
+    media: Mapped[List["Media"]] = relationship(back_populates="report", cascade="all, delete",lazy="selectin")
+
+   

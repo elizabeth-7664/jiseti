@@ -7,13 +7,14 @@ from ..core.security import get_current_user
 from ..models.user import User
 from ..schemas.user import UserOut as UserSchema
 from typing import List
+from uuid import UUID
 
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
-# Optional helper to check if the current user is admin
+
 async def get_admin_user(current_user_email: str = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).where(User.email == current_user_email))
+    result = await db.execute(select(User).where(User.email == current_user_email.email))
     user = result.scalars().first()
     if not user or not user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
@@ -33,7 +34,7 @@ async def list_all_users(
 
 @router.delete("/users/{user_id}")
 async def delete_user(
-    user_id: int,
+    user_id: UUID,
     db: AsyncSession = Depends(get_db),
     admin_user: User = Depends(get_admin_user)
 ):

@@ -1,24 +1,25 @@
+// src/pages/VerifyEmailPage.jsx
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
+import { verifyEmail } from "../utils/api"; // Corrected import
 
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [message, setMessage] = useState("Verifying...");
+  const location = useLocation();
+  const [message, setMessage] = useState(location.state?.message || "Verifying...");
   const [status, setStatus] = useState("loading");
 
   useEffect(() => {
     const token = searchParams.get("token");
 
     if (!token) {
-      setMessage("Verification token is missing.");
+      setMessage(location.state?.message || "Verification token is missing.");
       setStatus("error");
       return;
     }
 
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/api/auth/verify-email?token=${token}`)
+    verifyEmail(token)
       .then((res) => {
         setMessage(res.data.msg || "✅ Email verified successfully.");
         setStatus("success");
@@ -30,7 +31,7 @@ export default function VerifyEmailPage() {
         );
         setStatus("error");
       });
-  }, [searchParams]);
+  }, [searchParams, location.state]);
 
   useEffect(() => {
     if (status === "success") {
@@ -46,7 +47,7 @@ export default function VerifyEmailPage() {
       <div className="p-6 rounded-lg shadow-md bg-white max-w-md w-full text-center">
         {status === "loading" ? (
           <div>
-            <div className="animate-pulse text-gray-600 mb-2">Verifying...</div>
+            <div className="animate-pulse text-gray-600 mb-2">{message}</div>
             <div className="w-6 h-6 border-4 border-blue-500 border-dashed rounded-full animate-spin mx-auto"></div>
           </div>
         ) : (

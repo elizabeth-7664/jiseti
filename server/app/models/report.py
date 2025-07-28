@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from app.models.user import User
     from app.models.comment import Comment
     from app.models.media import Media
+    from app.models.notification import Notification
 
 class Report(Base):
     __tablename__ = "reports"

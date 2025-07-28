@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db import Base
 from app.models.report import Report
 from app.models.comment import Comment
+from app.models.media import Media
 
 class User(Base):
     __tablename__ = "users"
@@ -25,8 +26,7 @@ class User(Base):
 
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.utcnow)
 
-    # ✅ Relationships with corrected typing
     posts: Mapped[List["Report"]] = relationship("Report", back_populates="author", cascade="all, delete")
     comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="user", cascade="all, delete")
-    donations: Mapped[List["Donation"]] = relationship("Donation", back_populates="user", cascade="all, delete")
-    notifications: Mapped[List["Notification"]] = relationship("Notification", back_populates="user", cascade="all, delete")
+    notifications = relationship("Notification", back_populates="user")
+    media: Mapped[List["Media"]] = relationship("Media", back_populates="user", cascade="all, delete")

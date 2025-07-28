@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 
 from app.db import get_db
-from app.schemas.report import ReportCreate, ReportOut
+from app.schemas.report import ReportCreate, ReportOut, ReportUpdate
 from app.models.user import User
 from app.core.security import get_current_user
 from app.services import report_service
@@ -20,6 +20,15 @@ async def create_report(
     current_user: User = Depends(get_current_user)
 ):
     return await report_service.create_report(db, report_in, current_user)
+
+@router.put("/{report_id}", response_model=ReportOut)
+async def update_report(
+    report_id: UUID,
+    report_in: ReportUpdate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return await report_service.update_report(db, report_id, report_in, current_user)
 
 # Get all reports
 @router.get("/", response_model=List[ReportOut])
@@ -40,3 +49,12 @@ async def update_status(
     current_user: User = Depends(get_current_user)
 ):
     return await report_service.update_report_status(db, report_id, status_str, current_user)
+
+# Delete a report
+@router.delete("/{report_id}", status_code=status.HTTP_200_OK)
+async def delete_report(
+    report_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return await report_service.delete_report(db, report_id, current_user)

@@ -23,7 +23,7 @@ class ReportUpdate(BaseModel):
     location: Optional[str]
     latitude: Optional[float]
     longitude: Optional[float]
-    status: Optional[str] = Field(None, example="In Progress")
+    # status: Optional[str] = Field(None, example="In Progress")
     category: Optional[str] = Field(None, example="bribery")
 
 

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.api.auth import router as auth_router
-from app.api.admin import admin
+from app.api.admin import router as admin
 from app.api.comments import router as comment_router
 from app.api.reports import router as report_router
 from app.api.notifications import router as notification_router

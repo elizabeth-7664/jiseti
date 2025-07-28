@@ -1,18 +1,18 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, Field
 from uuid import UUID
 from typing import Optional
 
-class MediaBase(BaseModel):
-    file_url: str
-    file_type: str
-    user_id: UUID
-    report_id: Optional[UUID]
 
 class MediaCreate(BaseModel):
     report_id: Optional[UUID] = None
 
-class MediaOut(MediaBase):
+
+class MediaOut(BaseModel):
     id: UUID
+    file_url: str = Field(..., example="/uploads/abc123.jpg")
+    file_type: str = Field(..., example="image/jpeg")
+    report_id: Optional[UUID]
+    user_id: UUID
 
     class Config:
         orm_mode = True

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Buttons from "../components/Buttons";
+import Buttons from "../components/ui/Button";
 import { Shield, Users, Eye, TrendingUp } from "lucide-react";
 import cartoonImage from "../assets/maps.jpg";
 

@@ -1,3 +1,4 @@
+import requests
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -6,27 +7,55 @@ from fastapi import HTTPException, status
 from app.models.report import Report
 from app.schemas.report import ReportCreate, ReportUpdate
 from app.models.user import User
-from typing import List
+from typing import List, Optional
 
 
+async def geocode_location(location_name: str) -> tuple[Optional[float], Optional[float]]:
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {
+        "q": location_name,
+        "format": "json",
+        "limit": 1
+    }
+    headers = {"User-Agent": "jiseti-app"}
+
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        if data:
+            return float(data[0]["lat"]), float(data[0]["lon"])
+    except Exception as e:
+        print(f"Geocoding failed: {e}")
+    
+    return None, None
 async def create_report(
     db: AsyncSession,
     report_in: ReportCreate,
     current_user: User
 ) -> Report:
+    # Use provided coordinates, or geocode if missing
+    latitude = report_in.latitude
+    longitude = report_in.longitude
+
+    if latitude is None or longitude is None:
+        latitude, longitude = await geocode_location(report_in.location)
+
     report = Report(
         title=report_in.title,
         description=report_in.description,
         category=report_in.category,
-        location = report_in.location,
-        longitude=report_in.longitude,
-        latitude=report_in.latitude,
+        location=report_in.location,
+        latitude=latitude,
+        longitude=longitude,
         author_id=current_user.id
     )
+
     db.add(report)
     await db.commit()
     await db.refresh(report)
     return report
+
 
 
 async def get_all_reports(db: AsyncSession) -> List[Report]:

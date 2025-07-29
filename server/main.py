@@ -9,6 +9,7 @@ from app.api.reports import router as report_router
 from app.api.notifications import router as notification_router
 from app.api.media import router as media_router
 from app.models import * 
+from app.api import test_geocode
 
 import os
 from dotenv import load_dotenv
@@ -52,4 +53,4 @@ app.include_router(comment_router)
 app.include_router(report_router, prefix="/api/reports", tags=["Reports"])
 app.include_router(notification_router)
 app.include_router(media_router)
-
+app.include_router(test_geocode.router, prefix="/api", tags=["Test"])

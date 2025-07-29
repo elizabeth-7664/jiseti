@@ -1,3 +1,4 @@
+
 from sqlalchemy import String, ForeignKey, Boolean, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
@@ -22,4 +23,4 @@ class Notification(Base):
     user: Mapped["User"] = relationship("User", back_populates="notifications")
     report: Mapped["Report"] = relationship("Report", back_populates="notifications")
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow

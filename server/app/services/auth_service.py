@@ -36,6 +36,7 @@ async def register_user(user: UserCreate, db: AsyncSession):
 
     token = create_verify_token(user.email)
     verify_url = f"http://localhost:8000/api/verify-email?token={token}"
+    print(f"\n🚀 DEV ONLY: Email verification link for {user.email}:\n{verify_url}\n")
     await send_email(
         email_to=user.email,
         subject="Verify Your Email",
@@ -56,18 +57,25 @@ async def verify_user_email(token: str, db: AsyncSession):
 
     user.is_verified = True
     await db.commit()
+    await db.refresh(user)
     return {"msg": "Email verified successfully"}
+
 
 async def login_user(form_data, db: AsyncSession):
     result = await db.execute(select(User).where(User.email == form_data.username))
     user = result.scalars().first()
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect credentials")
-    if not user.is_verified:
-        raise HTTPException(status_code=403, detail="Email not verified")
+    
+    # if not user.is_verified:
+    #     raise HTTPException(status_code=403, detail="Email not verified")
 
     token = create_access_token(data={"sub": user.email})
-    return {"access_token": token, "token_type": "bearer"}
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "username": user.username  # Add this if needed in frontend
+    }
 
 async def send_password_reset_email(email: str, db: AsyncSession):
     result = await db.execute(select(User).where(User.email == email))

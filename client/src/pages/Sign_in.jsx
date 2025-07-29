@@ -1,5 +1,7 @@
+// src/pages/Sign_in.jsx
 import React, { useState } from "react";
-import API from "../utils/api";
+import "./Sign_in.css";
+import { login } from "../utils/api"; // Corrected import
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -8,7 +10,7 @@ function Sign_in() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login: authLogin } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -21,10 +23,10 @@ function Sign_in() {
       formData.append("username", email);
       formData.append("password", password);
 
-      const res = await API.post("/api/auth/login", formData, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      });
-      login(res.data);
+      const res = await login(formData);
+      const { access_token, user } = res.data;
+      localStorage.setItem("user", JSON.stringify({ access_token }));
+      authLogin({ access_token, user });
       navigate("/home");
     } catch (err) {
       console.error("Error:", err);
@@ -38,9 +40,8 @@ function Sign_in() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-8 border border-gray-300 rounded-xl bg-gray-100 shadow-sm">
-      <h2 className="text-2xl font-semibold text-center mb-6">Login to Jiseti</h2>
-
+    <div className="container">
+      <h2>Login to Jiseti</h2>
       {error && (
         <div className="bg-red-500/20 text-red-300 border border-red-500/30 p-3 rounded-lg mb-4 text-sm text-center">
           {typeof error === "string" ? (
@@ -52,48 +53,31 @@ function Sign_in() {
           )}
         </div>
       )}
-
-      <form onSubmit={handleSubmit} className="flex flex-col">
-        <label className="mb-1 font-semibold">Email</label>
+      <form onSubmit={handleSubmit} className="form">
+        <label>Email</label>
         <input
           type="email"
           placeholder="e.g. example@gmail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="p-2 mb-4 border border-gray-400 rounded-md"
         />
 
-        <label className="mb-1 font-semibold">Password</label>
+        <label>Password</label>
         <input
           type="password"
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="p-2 mb-4 border border-gray-400 rounded-md"
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className={`bg-green-600 hover:bg-green-700 text-white py-3 rounded-md transition ${
-            loading ? "opacity-60 cursor-not-allowed" : ""
-          }`}
-        >
+        <button type="submit" disabled={loading}>
           {loading ? "Signing in..." : "Sign In"}
         </button>
       </form>
 
-      <p className="text-sm text-blue-600 mt-2 hover:underline text-center">
-    <Link to="/reset-password">Forgot password?</Link>
-   </p>
-
-
-      <p className="text-center mt-4 text-sm">
-        Don't have an account?{" "}
-        <Link to="/sign_up" className="text-blue-600 hover:underline">
-          Sign Up
-        </Link>
+      <p className="redirect-text">
+        Don't have an account? <Link to="/sign_up">Sign Up</Link>
       </p>
     </div>
   );

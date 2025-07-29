@@ -132,14 +132,20 @@ async def update_report_location(
             detail="Cannot change location of processed report"
         )
 
-    report.latitude = location.latitude
-    report.longitude = location.longitude
+    latitude = location.latitude
+    longitude = location.longitude
+
+    
+    if latitude is None or longitude is None:
+        latitude, longitude = await geocode_location(location.location)
+
+    report.latitude = latitude
+    report.longitude = longitude
     report.location = location.location
 
     await db.commit()
     await db.refresh(report)
     return report
-
 
 async def delete_report(
     db: AsyncSession,

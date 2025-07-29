@@ -32,9 +32,8 @@ class ReportUpdate(BaseModel):
 
 class LocationUpdate(BaseModel):
     location: str
-    latitude: float
-    longitude: float
-
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 class ReportOut(ReportBase):
     id: UUID

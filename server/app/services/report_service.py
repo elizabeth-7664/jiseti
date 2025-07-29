@@ -9,7 +9,7 @@ from sqlalchemy.orm import selectinload
 
 
 from app.models.report import Report
-from app.schemas.report import ReportCreate, ReportUpdate
+from app.schemas.report import ReportCreate, ReportUpdate, LocationUpdate
 from app.models.user import User
 from typing import List, Optional
 

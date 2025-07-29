@@ -12,7 +12,7 @@ from app.models.user import User
 from app.core.security import get_current_user
 from app.services import report_service
 
-router = APIRouter(prefix="/api/records", tags=["Records"])
+router = APIRouter(prefix="/api/reports", tags=["Reports"])
 
 
 @router.post("/", response_model=ReportOut, status_code=status.HTTP_201_CREATED)

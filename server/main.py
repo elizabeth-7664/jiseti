@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.api.auth import router as auth_router
 from app.api.reports import router as report_router
-from app.api.admin import admin
+from app.api.admin import router as admin_router
 from app.api.comments import router as comment_router
 from app.api.notifications import router as notification_router
 from app.api.media import router as media_router
@@ -47,9 +47,9 @@ async def test_email():
     
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-app.include_router(admin)
+app.include_router(admin_router)
 app.include_router(comment_router)
-app.include_router(report_router, prefix="/api/reports", tags=["Reports"])
+app.include_router(report_router)
 app.include_router(notification_router)
 app.include_router(media_router)
 app.include_router(test_geocode.router, prefix="/api", tags=["Test"])

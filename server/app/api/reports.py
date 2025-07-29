@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from typing import List
@@ -11,7 +11,7 @@ from app.models.user import User
 from app.core.security import get_current_user
 from app.services import report_service
 
-router = APIRouter(prefix="/api/records", tags=["Records"])
+router = APIRouter(prefix="/api/reports", tags=["Reports"])
 
 
 @router.post("/", response_model=ReportOut, status_code=status.HTTP_201_CREATED)
@@ -51,6 +51,7 @@ async def update_location(
     current_user: User = Depends(get_current_user)
 ):
     return await report_service.update_report_location(db, report_id, location, current_user)
+
 
 @router.delete("/{report_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_report(

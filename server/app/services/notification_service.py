@@ -1,10 +1,12 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.notification import Notification
 from app.schemas.notification import NotificationCreate
 from uuid import uuid4, UUID
 from datetime import datetime
 
-def create_notification(db: Session, notification_data: NotificationCreate):
+# Create a new notification
+async def create_notification(db: AsyncSession, notification_data: NotificationCreate):
     notification = Notification(
         id=uuid4(),
         user_id=notification_data.user_id,
@@ -14,9 +16,12 @@ def create_notification(db: Session, notification_data: NotificationCreate):
         created_at=datetime.utcnow()
     )
     db.add(notification)
-    db.commit()
-    db.refresh(notification)
+    await db.commit()
+    await db.refresh(notification)
     return notification
 
-def get_notifications_for_user(db: Session, user_id: UUID):
-    return db.query(Notification).filter(Notification.user_id == user_id).all()
+# Get all notifications for a given user
+async def get_notifications_for_user(db: AsyncSession, user_id: UUID):
+    stmt = select(Notification).where(Notification.user_id == user_id)
+    result = await db.execute(stmt)
+    return result.scalars().all()

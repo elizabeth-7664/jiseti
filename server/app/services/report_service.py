@@ -1,8 +1,12 @@
 import requests
 from uuid import UUID
+from typing import List
+
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from fastapi import HTTPException, status
+from sqlalchemy.orm import selectinload
+
 
 from app.models.report import Report
 from app.schemas.report import ReportCreate, ReportUpdate
@@ -58,10 +62,17 @@ async def create_report(
 
 
 
-async def get_all_reports(db: AsyncSession) -> List[Report]:
-    result = await db.execute(select(Report))
-    return result.scalars().all()
 
+async def get_all_reports(db: AsyncSession) -> List[Report]:
+    result = await db.execute(
+        select(Report)
+        .options(
+            selectinload(Report.author),
+            selectinload(Report.media),
+            selectinload(Report.comments)
+        )
+    )
+    return result.scalars().all()
 
 async def get_report_by_id(db: AsyncSession, report_id: UUID) -> Report:
     result = await db.execute(select(Report).where(Report.id == report_id))
@@ -106,18 +117,27 @@ async def update_report(
 async def update_report_status(
     db: AsyncSession,
     report_id: UUID,
-    status_str: str,
+    location: LocationUpdate,
     current_user: User
 ) -> Report:
     report = await get_report_by_id(db, report_id)
 
-    if not current_user.is_admin:
+    if report.author_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only admins can update report status"
+            detail="Not allowed to update location"
         )
 
-    report.status = status_str
+    if report.status != "draft":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot change location of processed report"
+        )
+
+    report.latitude = location.latitude
+    report.longitude = location.longitude
+    report.location = location.location
+
     await db.commit()
     await db.refresh(report)
     return report

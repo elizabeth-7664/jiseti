@@ -5,7 +5,6 @@ from app.api.auth import router as auth_router
 from app.api.reports import router as report_router
 from app.api.admin import admin
 from app.api.comments import router as comment_router
-from app.api.reports import router as report_router
 from app.api.notifications import router as notification_router
 from app.api.media import router as media_router
 from app.models import * 

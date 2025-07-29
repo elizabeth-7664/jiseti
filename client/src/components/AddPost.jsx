@@ -112,16 +112,14 @@ export const AddPost = ({ isOpen, onClose, onPostAdded }) => {
           <div>
             <label className="block mb-1">Category</label>
             <select
-              className="border p-2 w-full mb-3 rounded"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-            >
-              <option value="bribery">Bribery</option>
-              <option value="corruption">Corruption</option>
-              <option value="fraud">Fraud</option>
-              {/* Add more categories as needed */}
-            </select>
+  className="border p-2 w-full mb-3 rounded"
+  value={category}
+  onChange={(e) => setCategory(e.target.value)}
+  required
+>
+  <option value="red-flag">Red Flag</option>
+  <option value="intervention">Intervention</option>
+</select>
           </div>
           <div className="flex justify-end space-x-2">
             <button

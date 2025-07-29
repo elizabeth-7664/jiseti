@@ -38,11 +38,11 @@ export const fetchCurrentUser = () =>
   });
 
 // ================== REPORTS ==================
-export const createReport = (data) => API.post("/create-report", data);
-export const fetchReports = () => API.get("/api/get-reports");
-export const fetchReportById = (id) => API.get(`/report/${id}`);
+export const createReport = (data) => API.post("/records", data);
+export const fetchReports = () => API.get("/records");
+export const fetchReportById = (id) => API.get(`/records/${userId}`);
 export const updateReportStatus = (id, status) =>
-  API.patch(`/report/${id}/status`, { status });
+  API.patch(`/records/${userId}`, { status });
 
 // ================== USERS (ADMIN) ==================
 export const fetchAllUsers = () => API.get("/admin/users");

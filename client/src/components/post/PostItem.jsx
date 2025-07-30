@@ -107,16 +107,9 @@ const PostItem = ({ post }) => {
           )}
           <p>{formatDate(post.created_at)}</p>
         </div>
-<<<<<<< HEAD
-        <p className="text-sm text-muted-foreground">{formatDate(post.created_at)}</p>
-        <p className="line-clamp-3">{post.description}</p>
-        <div className="text-xs text-right text-gray-400">{post.category?.toUpperCase() || 'UNCATEGORIZED'}</div>
-      </CardContent>
-    </Card>
-=======
       </div>
     </Link>
->>>>>>> 54238e99b91ea2b33eb90868726eed0f652a2364
+
   );
 };
 

@@ -4,6 +4,7 @@ import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { login } from "../utils/api";
 import { useAuth } from "../context/AuthContext";
+import api from "../utils/api";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -24,17 +25,34 @@ const LoginPage = () => {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
     try {
       const formData = new URLSearchParams();
       formData.append("username", form.email);
       formData.append("password", form.password);
 
       const res = await login(formData);
-      const { access_token, user } = res.data;
+      const { access_token } = res.data;
 
+      // Temporarily store token to make profile request
+      localStorage.setItem("access_token", access_token);
+
+      // Fetch user profile using the token
+      const profileRes = await api.get("/users/me", {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      const user = profileRes.data;
+
+      // Save both token and user in localStorage
       localStorage.setItem("user", JSON.stringify({ access_token, user }));
+
+      // Update auth context
       authLogin({ access_token, user });
 
+      // Navigate depending on role
       if (user.is_admin) {
         navigate("/admin");
       } else {
@@ -49,7 +67,7 @@ const LoginPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">

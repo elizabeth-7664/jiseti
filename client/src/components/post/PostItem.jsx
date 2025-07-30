@@ -14,7 +14,7 @@ const PostItem = ({ post }) => {
         </div>
         <p className="text-sm text-muted-foreground">{formatDate(post.created_at)}</p>
         <p className="line-clamp-3">{post.description}</p>
-        <div className="text-xs text-right text-gray-400">{post.type.toUpperCase()}</div>
+        <div className="text-xs text-right text-gray-400">{post.category?.toUpperCase() || 'UNCATEGORIZED'}</div>
       </CardContent>
     </Card>
   );

@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from uuid import UUID
 from datetime import datetime
+from app.models.report import ReportStatus, RecordType
 
 
 class ReportBase(BaseModel):
@@ -10,7 +11,7 @@ class ReportBase(BaseModel):
     location: Optional[str] = Field(None, example="Nairobi")
     latitude: Optional[float] = Field(None, example=-1.2921)
     longitude: Optional[float] = Field(None, example=36.8219)
-    category: str = Field(..., example="bribery")
+    category: RecordType = Field(..., example="red-flag")
 
 
 class ReportCreate(ReportBase):
@@ -23,16 +24,23 @@ class ReportUpdate(BaseModel):
     location: Optional[str]
     latitude: Optional[float]
     longitude: Optional[float]
-    status: Optional[str] = Field(None, example="In Progress")
-    category: Optional[str] = Field(None, example="bribery")
+    category: Optional[RecordType]
 
+    class Config:
+        orm_mode = True
+
+
+class LocationUpdate(BaseModel):
+    location: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 class ReportOut(ReportBase):
     id: UUID
-    status: str = Field(..., example="Pending")
+    status: ReportStatus = Field(..., example="draft")
     created_at: datetime
     updated_at: datetime
 
     class Config:
         orm_mode = True
-        allow_population_by_field_name = True
+        use_enum_values = True  

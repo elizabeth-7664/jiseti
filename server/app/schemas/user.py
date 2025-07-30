@@ -39,5 +39,4 @@ class UserUpdate(BaseModel):
 class FullUser(UserOut):
     posts: Optional[List] = []
     comments: Optional[List] = []
-    donations: Optional[List] = []
     notifications: Optional[List] = []

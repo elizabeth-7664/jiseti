@@ -21,10 +21,10 @@ from app.utils.email_utils import send_email
 app = FastAPI()
 
 # CORS configuration
-origins = [os.getenv("FRONTEND_URL", "http://127.0.0.1:5173")]
+# origins = [os.getenv("FRONTEND_URL", "http://127.0.0.1:5173")]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[os.getenv("FRONTEND_URL",)], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -19,12 +19,10 @@ class Settings(BaseSettings):
     USE_CREDENTIALS: bool
     VALIDATE_CERTS: bool
     TEST_RECEIVER_EMAIL: str
-
     model_config={
         "extra": "forbid",
         "env_file": ".env"
     }
 settings = Settings()
 engine = create_async_engine(settings.DATABASE_URL, echo=True)
-
 print("Loaded settings:", settings.model_dump())

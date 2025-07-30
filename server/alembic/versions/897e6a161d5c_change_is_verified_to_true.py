@@ -1,8 +1,8 @@
-"""Add notification model
+"""change is_verified to true
 
-Revision ID: 021575287e7c
-Revises: d8c6c6584376
-Create Date: 2025-07-25 08:42:59.172791
+Revision ID: 897e6a161d5c
+Revises: c8d96bfa0da0
+Create Date: 2025-07-30 14:52:07.647379
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '021575287e7c'
-down_revision: Union[str, None] = 'd8c6c6584376'
+revision: str = '897e6a161d5c'
+down_revision: Union[str, None] = 'c8d96bfa0da0'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

@@ -17,12 +17,16 @@ conf = ConnectionConfig(
     VALIDATE_CERTS=os.getenv("VALIDATE_CERTS", "True") == "True"
 )
 
-async def send_email(subject: str, email_to: str, body: str):
-    message = MessageSchema(
-        subject=subject,
-        recipients=[email_to],
-        body=body,
-        subtype="html"
-    )
+async def send_email(message):
+    if os.getenv("ENV", "dev") == "dev":
+        print("🚀 DEV ONLY: Skipping actual email sending.")
+        print(f"Verification link: {message.html}")
+        return
     fm = FastMail(conf)
-    await fm.send_message(message)
+    try:
+        await fm.send_message(message)
+    except Exception as e:
+        print("🚨 Email sending failed:", e)
+        print("✅ DEV MODE: Showing verification link in terminal instead:")
+        print(message.html)
+

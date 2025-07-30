@@ -1,8 +1,8 @@
-"""Add media table
+"""change is_verified to true
 
-Revision ID: f8046b362daf
-Revises: bc325bb5b8b5
-Create Date: 2025-07-26 07:19:36.497416
+Revision ID: c8d96bfa0da0
+Revises: 18388183ec45
+Create Date: 2025-07-30 14:38:19.704088
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'f8046b362daf'
-down_revision: Union[str, None] = 'bc325bb5b8b5'
+revision: str = 'c8d96bfa0da0'
+down_revision: Union[str, None] = '18388183ec45'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

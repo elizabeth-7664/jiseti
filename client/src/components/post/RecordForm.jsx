@@ -8,7 +8,7 @@ import { toast } from "sonner"; // optional toast lib
 const initialForm = {
   title: "",
   description: "",
-  type: "red-flag", // or "intervention"
+  category: "red-flag", // or "intervention"
   coordinates: null,
   media: [],
 };
@@ -54,8 +54,8 @@ const RecordForm = ({ onPostAdded }) => {
       <div>
         <label className="block text-sm font-medium">Report Type</label>
         <select
-          name="type"
-          value={formData.type}
+          name="category"
+          value={formData.category}
           onChange={handleChange}
           className="w-full border rounded p-2"
         >

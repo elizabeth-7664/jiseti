@@ -69,14 +69,14 @@ const LandingPage = () => {
 								<Buttons
 									size="lg"
 									button="Get Started"
-									onClick={() => navigate("/sign_up")}
+									onClick={() => navigate("/register")}
 									className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition w-full sm:w-auto"
 								/>
 								<Buttons
 									variant="outline"
 									size="lg"
 									button="Sign In"
-									onClick={() => navigate("/sign_in")}
+									onClick={() => navigate("/login")}
 									className="border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white font-semibold py-3 px-6 rounded-lg transition w-full sm:w-auto"
 								/>
 							</div>

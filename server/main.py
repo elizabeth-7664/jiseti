@@ -4,7 +4,7 @@ from app.api.auth import router as auth_router
 from app.api.admin import admin
 from app.api.comments import router as comment_router
 from app.api.reports import router as report_router
-from app.api.notifications import router as notification_router
+# from app.api.notifications import router as notification_router
 from app.models import * 
 
 
@@ -18,7 +18,7 @@ from app.utils.email_utils import send_email
 app = FastAPI()
 
 # CORS configuration
-origins = [os.getenv("FRONTEND_URL", "http://localhost:5173")]
+origins = [os.getenv("FRONTEND_URL", "http://127.0.0.1:5173")]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -47,4 +47,4 @@ app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(admin)
 app.include_router(comment_router)
 app.include_router(report_router)
-app.include_router(notification_router)
+#app.include_router(notification_router)

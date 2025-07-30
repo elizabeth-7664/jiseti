@@ -32,7 +32,7 @@ const InApp = () => {
 
           {/* Protected Routes */}
           <Route
-            path="/"
+            path="/home"
             element={
               <ProtectedRoute>
                 <HomePage />
@@ -56,7 +56,7 @@ const InApp = () => {
             }
           />
           <Route
-            path="/create"
+            path="/create-post"
             element={
               <ProtectedRoute>
                 <CreatePostPage />

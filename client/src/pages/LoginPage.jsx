@@ -101,7 +101,7 @@ const LoginPage = () => {
 
         <p className="text-sm text-center mt-4">
           Don’t have an account?{" "}
-          <Link to="/sign_up" className="text-blue-600 underline">
+          <Link to="/register" className="text-blue-600 underline">
             Sign Up
           </Link>
         </p>

@@ -36,7 +36,7 @@ const LoginPage = () => {
       localStorage.setItem("user", JSON.stringify({ access_token }));
       authLogin({ access_token, user });
 
-      navigate("/home");
+      navigate("/");
     } catch (err) {
       console.error("Login error:", err);
       const errorMessage = Array.isArray(err.response?.data?.detail)

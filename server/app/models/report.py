@@ -18,15 +18,18 @@ if TYPE_CHECKING:
     from app.models.media import Media
     from app.models.notification import Notification
 
-class RecordType(enum.Enum):
+
+class RecordType(str, enum.Enum):
     RED_FLAG = "red-flag"
     INTERVENTION = "intervention"
 
-class ReportStatus(enum.Enum):
+
+class ReportStatus(str, enum.Enum):
     DRAFT = "draft"
     UNDER_INVESTIGATION = "under-investigation"
     REJECTED = "rejected"
     RESOLVED = "resolved"
+
 
 class Report(Base):
     __tablename__ = "reports"

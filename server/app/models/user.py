@@ -42,3 +42,12 @@ class User(Base):
         foreign_keys="Comment.created_by"
     )
 
+    notifications: Mapped[List["Notification"]] = relationship(
+    "Notification", back_populates="user", cascade="all, delete-orphan"
+   )
+
+    media: Mapped[List["Media"]] = relationship(
+    back_populates="user",
+    cascade="all, delete",
+    lazy="selectin"
+   )

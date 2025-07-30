@@ -5,16 +5,19 @@ import PostMediaUploader from "./PostMediaUploader";
 import { createReport } from "../../utils/api";
 import { toast } from "sonner"; // optional toast lib
 
+// --- CRITICAL FIX: Ensure initialForm is defined and not commented out ---
 const initialForm = {
   title: "",
   description: "",
   category: "red-flag", // or "intervention"
-  location: "", // <-- ADDED: Text input for location
+  location: "", // Text input for location
   coordinates: null, // Still for map picker (latitude, longitude)
   media: [],
 };
+// --- END CRITICAL FIX ---
 
-const RecordForm = ({ onPostAdded }) => {
+// Assuming you chose Option 1 from last time: change RecordForm to expect onSuccess
+const RecordForm = ({ onSuccess }) => { // Assuming onSuccess is the prop name
   const [formData, setFormData] = useState(initialForm);
   const [submitting, setSubmitting] = useState(false);
 
@@ -33,42 +36,31 @@ const RecordForm = ({ onPostAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Decide if location text is mandatory if coordinates are not selected.
-    // Given your backend error, `location` (text) must not be null if DB column is NOT NULL.
-    // If you made the DB column nullable, then you can allow it to be empty string or null.
-    // For now, let's make sure it's at least an empty string if not filled.
 
     if (!formData.coordinates && !formData.location.trim()) {
-        // If both map coordinates AND text location are missing
-        // This check depends on your backend's nullable configuration for location.
-        // If `location` in DB is NOT NULL, you might want to enforce it here.
-        // If DB `location` is nullable, an empty string is fine.
         return toast.error("Please provide a location (either on map or as text).");
     }
-
 
     try {
       setSubmitting(true);
 
-      // Construct the payload for the backend
       const payload = {
         title: formData.title,
         description: formData.description,
         category: formData.category,
-        location: formData.location.trim() === "" ? null : formData.location.trim(), // Send null if empty string, otherwise trim it
+        location: formData.location.trim() === "" ? null : formData.location.trim(),
         latitude: formData.coordinates ? formData.coordinates.lat : null,
         longitude: formData.coordinates ? formData.coordinates.lng : null,
         media: formData.media,
       };
 
-      const response = await createReport(payload); // Send the constructed payload
-      onPostAdded(response);
+      const response = await createReport(payload);
+      onSuccess(response.data); // Call onSuccess with response.data
       toast.success("Report submitted");
-      setFormData(initialForm);
+      setFormData(initialForm); // Reset form
     } catch (err) {
       toast.error("Failed to submit report");
-      console.error("Submission error:", err); // Log the full error for debugging
-      // console.error("Error response:", err.response?.data); // Log backend error response
+      console.error("Submission error:", err);
     } finally {
       setSubmitting(false);
     }
@@ -116,7 +108,6 @@ const RecordForm = ({ onPostAdded }) => {
         />
       </div>
 
-      {/* ADDED: Text input for location */}
       <div>
         <label className="block text-sm font-medium">Specific Location (e.g., street, landmark)</label>
         <input

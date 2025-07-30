@@ -7,7 +7,7 @@ import { getReport } from "../utils/api"
 import Button from "../components/ui/Button"
 
 export default function PostDetailPage() {
-  const { reportId } = useParams() // <--- CHANGE THIS LINE: Match your route parameter name
+  const { reportId } = useParams()
   const navigate = useNavigate()
   const [post, setPost] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -16,15 +16,15 @@ export default function PostDetailPage() {
   useEffect(() => {
     const loadPost = async () => {
       try {
-        if (!reportId) { // Add a check to ensure reportId exists before fetching
+        if (!reportId) { 
           setError("No report ID found in URL.");
           setLoading(false);
           return;
         }
-        const res = await getReport(reportId) // <--- Use reportId here
+        const res = await getReport(reportId) 
         setPost(res.data)
       } catch (err) {
-        console.error("Error loading post:", err) // More descriptive error log
+        console.error("Error loading post:", err) 
         setError("Failed to load post. Please try again.")
       } finally {
         setLoading(false)
@@ -32,7 +32,7 @@ export default function PostDetailPage() {
     }
 
     loadPost()
-  }, [reportId]) // <--- Dependency array: depend on reportId
+  }, [reportId]) 
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8 text-gray-900 dark:text-white">

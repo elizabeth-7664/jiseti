@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from app.db import get_db
-from ..core.security import get_current_user, hash_password
+from ..core.security import get_current_user, get_password_hash
 from ..models.user import User
 from ..schemas.user import User as UserSchema, UserUpdate
 
@@ -43,12 +43,11 @@ async def update_current_user(
     if updates.avatar is not None:
         user.avatar = updates.avatar
     if updates.password is not None:
-        user.password = hash_password(updates.password)
+        user.password = get_password_hash(updates.password)
 
     await db.commit()
     await db.refresh(user)
     return user
-
 
 @router.get("/users/{user_id}", response_model=UserSchema)
 async def read_user_by_id(

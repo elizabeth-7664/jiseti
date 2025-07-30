@@ -5,7 +5,7 @@ from typing import Optional, List
 import uuid
 from datetime import datetime
 from app.models.report import ReportStatus, RecordType # Ensure ReportStatus and RecordType are correctly imported
-
+from app.schemas.media import MediaOut
 # Your existing schemas
 class ReportBase(BaseModel):
     title: str = Field(..., example="Corruption at Road Project")

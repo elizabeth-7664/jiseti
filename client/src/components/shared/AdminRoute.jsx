@@ -1,11 +1,10 @@
-// src/components/shared/AdminRoute.jsx (WITH LOADING CHECK)
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom"; // Import useLocation
 import { useAuth } from "../../hooks/useAuth";
 import Loader from './Loader'; // Assuming you have a Loader component
 
 const AdminRoute = ({ children }) => {
-  const { user, loading } = useAuth(); // Get 'loading' state as well
+  const { user, loading } = useAuth(); 
   const location = useLocation(); // To store current path for redirection after login
 
   // 1. Show loader while authentication status is being determined

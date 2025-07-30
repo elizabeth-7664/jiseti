@@ -12,7 +12,7 @@ from app.schemas.report import ReportOut
 from app.core.security import get_current_user
 
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
 
 

@@ -4,11 +4,11 @@ import { useNavigate, Link } from "react-router-dom";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { login } from "../utils/api";
-import { useAuth } from "../context/AuthContext"; // Ensure useAuth is correctly imported
+import { useAuth } from "../context/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login: authLogin } = useAuth(); // Destructure login from useAuth and alias it to authLogin
+  const { login: authLogin } = useAuth();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
@@ -32,29 +32,35 @@ const LoginPage = () => {
       formData.append("password", form.password);
 
       const res = await login(formData);
-      const { access_token, user } = res.data; // <-- The user object is available here!
+      const { access_token, user } = res.data; // Destructure both from the response
 
-      // --- ADD THESE CONSOLE LOGS HERE ---
-      console.log("Login API Response User Object:", user);
+      // --- CRITICAL FIX HERE: Store token and user separately ---
+      localStorage.setItem("access_token", access_token); // Store the token string directly
+      localStorage.setItem("user", JSON.stringify(user)); // Store the full user object
+      // --- END CRITICAL FIX ---
+
+      // --- ADDED CONSOLE LOGS FOR VERIFICATION ---
+      console.log("Login API Response - Full data:", res.data);
+      console.log("Login API Response - Extracted User Object:", user);
+      console.log("Login API Response - Extracted Access Token:", access_token);
+      console.log("User object stored in localStorage ('user' key):", localStorage.getItem("user"));
+      console.log("Token string stored in localStorage ('access_token' key):", localStorage.getItem("access_token"));
+
       if (user) {
         console.log("Is user admin?", user.is_admin);
-        console.log("User role (if applicable):", user.role); // Log user.role too, just in case
+        console.log("User role (if applicable):", user.role);
       }
       // --- END CONSOLE LOGS ---
 
-      // Store token (or whatever your authLogin expects for token)
-      localStorage.setItem("user", JSON.stringify({ access_token })); // Or directly store user info if needed for persistence
+      // Call authLogin to update context state with both the token and the user details
+      authLogin({ access_token, user });
 
-      // Call authLogin to update context state with user details (including is_admin)
-      authLogin({ access_token, user }); // Pass the full user object to update context
-
-      // --- ADD THIS CONDITIONAL NAVIGATION LOGIC ---
+      // Conditional navigation logic based on user.is_admin
       if (user && user.is_admin) {
         navigate("/admin"); // Redirect to admin dashboard
       } else {
         navigate("/home"); // Redirect to homepage for regular users
       }
-      // --- END CONDITIONAL NAVIGATION LOGIC ---
 
     } catch (err) {
       console.error("Login error:", err);

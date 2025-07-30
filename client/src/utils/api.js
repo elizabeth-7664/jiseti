@@ -1,3 +1,5 @@
+// src/utils/api.js
+
 import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
@@ -9,57 +11,28 @@ const api = axios.create({
 });
 
 // Add JWT token from localStorage to headers
-// api.interceptors.request.use(
-//   (config) => {
-//     const user = JSON.parse(localStorage.getItem("user"));
-//     const token = user?.token;
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-//   },
-//   (error) => Promise.reject(error)
-// );
-
-// // Global response error handler (e.g., JWT expired)
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response?.status === 401) {
-//       localStorage.removeItem("user");
-//       window.location.href = "/login";
-//     }
-//     return Promise.reject(error);
-//   }
-// );
 api.interceptors.request.use(
   (config) => {
+    const token = localStorage.getItem("access_token");
     const userString = localStorage.getItem("user");
-    let token = null;
-
-    console.log("Interceptor: Attempting to get user from localStorage. Raw string:", userString); // LOG 1
-
+    let user = null;
     if (userString) {
       try {
-        const user = JSON.parse(userString);
-        // --- CHANGE THIS LINE ---
-        token = user?.access_token; // <--- Changed from user?.token to user?.access_token
-        // ------------------------
-
-        console.log("Interceptor: Parsed user object. Token found:", !!token); // LOG 2
-        if (token) {
-            console.log("Interceptor: Token starts with:", token.substring(0, 10) + '...'); // LOG 3
-        }
+        user = JSON.parse(userString);
       } catch (e) {
-        console.error("Interceptor: Error parsing 'user' from localStorage:", e); // LOG 4
+        console.error("Interceptor: Error parsing 'user' from localStorage:", e);
       }
     }
 
+    console.log("Interceptor: Attempting to get token from localStorage ('access_token' key). Raw token:", token);
+    console.log("Interceptor: User object (from 'user' key, for info):", user);
+    console.log("Interceptor: Token found:", !!token);
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log("Interceptor: Authorization header set."); // LOG 5
+      console.log("Interceptor: Authorization header set with token starting:", token.substring(0, 10) + '...');
     } else {
-      console.warn("Interceptor: No valid token found to set Authorization header."); // LOG 6
+      console.warn("Interceptor: No valid token found to set Authorization header.");
     }
     return config;
   },
@@ -72,12 +45,14 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("user");
+      localStorage.removeItem("access_token");
       window.location.href = "/login";
     }
     
     return Promise.reject(error);
   }
 );
+
 // ---------------------------------------------
 // ✅ AUTH
 // ---------------------------------------------
@@ -95,12 +70,18 @@ export const checkDb = () => api.get("/auth/check-db");
 // ---------------------------------------------
 // ✅ REPORTS
 // ---------------------------------------------
-export const getReports = () => api.get("/reports/");
+export const getReports = () => api.get("/reports/"); // This already gets all reports
 export const getReport = (id) => api.get(`/reports/${id}`);
 export const createReport = (data) => api.post("/reports/", data);
 export const updateReport = (id, data) => api.put(`/reports/${id}`, data);
 export const deleteReport = (id) => api.delete(`/reports/${id}`);
 export const updateReportLocation = (id, data) => api.patch(`/reports/${id}/location`, data);
+
+// ---------------------------------------------
+// ✅ POSTS (NEW SECTION FOR ALL POSTS)
+// ---------------------------------------------
+// Assuming /posts/ returns all posts. Adjust if your backend has /admin/posts
+//export const getAllPosts = () => api.get("/posts/"); // <--- NEWLY ADDED FUNCTION
 
 // ---------------------------------------------
 // ✅ MEDIA
@@ -130,8 +111,10 @@ export const getUserNotifications = (userId) => api.get(`/notifications/user/${u
 // ---------------------------------------------
 export const getUsers = () => api.get("/admin/users");
 export const deleteUser = (userId) => api.delete(`/admin/users/${userId}`);
-export const updateReportStatus = (reportId, statusData) =>
+export const updateReportStatus = (reportId, statusData) => // <--- ADD THIS NEW FUNCTION
   api.patch(`/admin/reports/${reportId}/status`, statusData);
+//export const updateReportStatus = (reportId, statusData) =>
+  //api.patch(`/admin/reports/${reportId}/status`, statusData);
 
 // ---------------------------------------------
 // ✅ GENERIC UTILS (Optional for flexibility)

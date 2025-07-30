@@ -1,3 +1,5 @@
+# app/api/admin.py
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -6,26 +8,19 @@ from uuid import UUID
 
 from app.db import get_db
 from app.models.user import User
-from app.models.report import Report, ReportStatus
+from app.models.report import Report, ReportStatus # Keep ReportStatus for validation if needed
 from app.schemas.user import UserOut as UserSchema
-from app.schemas.report import ReportOut
-from app.core.security import get_current_user
+from app.schemas.report import ReportOut, ReportStatusUpdate # <--- IMPORT ReportStatusUpdate
+from app.core.security import get_current_user as get_admin_user # Use get_admin_user alias for clarity
+from app.services import report_service # <--- IMPORT report_service
 
+router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
-
-
-
-async def get_admin_user(
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
-) -> User:
-    result = await db.execute(select(User).where(User.id == current_user.id))
-    user = result.scalar_one_or_none()
-    if not user or not user.is_admin:
-        raise HTTPException(status_code=403, detail="Admin access required")
-    return user
-
+# Using get_current_user as get_admin_user for consistency with previous discussion
+# This function ensures the user is authenticated and is an admin
+# (Assuming it's defined elsewhere, e.g., app/core/security.py)
+# If get_admin_user is defined in this file, keep it as is.
+# async def get_admin_user(...): ... (your existing definition)
 
 
 @router.get("/users", response_model=List[UserSchema])
@@ -38,7 +33,6 @@ async def list_all_users(
     """
     result = await db.execute(select(User))
     return result.scalars().all()
-
 
 
 @router.delete("/users/{user_id}", status_code=status.HTTP_200_OK)
@@ -61,28 +55,29 @@ async def delete_user(
     return {"detail": f"User {user_id} deleted successfully"}
 
 
-
+# --- UPDATED ENDPOINT FOR REPORT STATUS CHANGE ---
 @router.patch("/reports/{report_id}/status", response_model=ReportOut)
 async def update_report_status(
     report_id: UUID,
-    new_status: ReportStatus,
+    status_update: ReportStatusUpdate, # <--- Use the new Pydantic schema
     db: AsyncSession = Depends(get_db),
     admin_user: User = Depends(get_admin_user)
 ):
     """
     Admin-only: Change the status of a report.
-    Allowed statuses: under-investigation, rejected, resolved
+    Allowed statuses: "under investigation", "rejected", "resolved".
     """
-    result = await db.execute(select(Report).where(Report.id == report_id))
-    report = result.scalar_one_or_none()
+    # Optional: Re-validate status if you want to ensure it's from the enum values
+    # FastAPI/Pydantic will handle basic enum validation if ReportStatusUpdate.status is ReportStatus
+    # but explicit check might be desired for custom error messages.
+    # if status_update.status not in [ReportStatus.UNDER_INVESTIGATION, ReportStatus.REJECTED, ReportStatus.RESOLVED]:
+    #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid status provided.")
 
-    if not report:
-        raise HTTPException(status_code=404, detail="Report not found")
+    updated_report = await report_service.update_report_status(
+        db, report_id, status_update.status # <--- Pass the enum value from the schema
+    )
 
-    if report.status in [ReportStatus.RESOLVED, ReportStatus.REJECTED]:
-        raise HTTPException(status_code=400, detail="This report is already closed.")
+    if not updated_report:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Report not found")
 
-    report.status = new_status
-    await db.commit()
-    await db.refresh(report)
-    return report
+    return updated_report

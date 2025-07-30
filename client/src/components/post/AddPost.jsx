@@ -3,11 +3,13 @@ import React, { useState } from "react";
 import Modal from "../ui/Modal";
 import RecordForm from "./RecordForm";
 
-export default function AddPost({ onPostAdded }) {
+// Add onPostAdded to the destructured props
+export default function AddPost({ onPostAdded }) { // <--- ADDED onPostAdded here
   const [isOpen, setIsOpen] = useState(false);
 
+  // handleSuccess will still call onPostAdded, but it's now passed down
   const handleSuccess = (newPost) => {
-    onPostAdded(newPost);
+    onPostAdded(newPost); // This now correctly calls the prop received by AddPost
     setIsOpen(false);
   };
 
@@ -20,8 +22,9 @@ export default function AddPost({ onPostAdded }) {
         + New Report
       </button>
 
+      {/* Pass onPostAdded directly to RecordForm */}
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <RecordForm mode="create" onSuccess={handleSuccess} />
+        <RecordForm mode="create" onPostAdded={handleSuccess} /> {/* <--- CHANGED TO onPostAdded */}
       </Modal>
     </>
   );

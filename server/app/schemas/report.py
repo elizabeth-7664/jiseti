@@ -1,11 +1,12 @@
-from pydantic import BaseModel, Field
+# app/schemas/report.py
+
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
-from uuid import UUID
+import uuid
 from datetime import datetime
-from app.models.report import ReportStatus, RecordType 
-from app.schemas.media import MediaOut
+from app.models.report import ReportStatus, RecordType # Ensure ReportStatus and RecordType are correctly imported
 
-
+# Your existing schemas
 class ReportBase(BaseModel):
     title: str = Field(..., example="Corruption at Road Project")
     description: str = Field(..., example="Bribes were requested at checkpoint X.")
@@ -37,12 +38,21 @@ class LocationUpdate(BaseModel):
     longitude: Optional[float] = None
 
 class ReportOut(ReportBase):
-    id: UUID
-    status: ReportStatus = Field(..., example="draft")
+    id: uuid.UUID
+    status: ReportStatus = Field(..., example="draft") # Using the ReportStatus enum
     created_at: datetime
     updated_at: datetime
     media: List[MediaOut] = []
 
     class Config:
         orm_mode = True
-        use_enum_values = True  
+        use_enum_values = True # Important for serializing enum values correctly
+
+# --- NEW SCHEMA FOR ADMIN STATUS UPDATE ---
+class ReportStatusUpdate(BaseModel):
+    status: ReportStatus = Field(..., example=ReportStatus.UNDER_INVESTIGATION.value)
+    # You can add an optional field for admin notes/comments if needed
+    # admin_notes: Optional[str] = Field(None, example="Investigation initiated.")
+
+    class Config:
+        use_enum_values = True # Ensure enum value is used in request body

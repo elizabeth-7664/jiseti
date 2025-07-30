@@ -6,7 +6,7 @@ import { getReport } from "../utils/api"
 import Button from "../components/ui/Button"
 
 export default function PostDetailPage() {
-  const { id } = useParams()
+  const { reportId } = useParams()
   const navigate = useNavigate()
   const [post, setPost] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -15,7 +15,7 @@ export default function PostDetailPage() {
   useEffect(() => {
     const loadPost = async () => {
       try {
-        const res = await getReport(id)
+        const res = await getReport(reportId)
         setPost(res.data)
       } catch (err) {
         console.error(err)
@@ -26,7 +26,7 @@ export default function PostDetailPage() {
     }
 
     loadPost()
-  }, [id])
+  }, [reportId])
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8 text-gray-900 dark:text-white">

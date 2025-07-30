@@ -31,13 +31,10 @@ const LoginPage = () => {
       formData.append("username", form.email);
       formData.append("password", form.password);
 
-      const res = await login(formData);
+      const res = await login(formData); // this returns the access_token only
       const { access_token } = res.data;
 
-      // Temporarily store token to make profile request
-      localStorage.setItem("access_token", access_token);
-
-      // Fetch user profile using the token
+      // Fetch user data
       const profileRes = await api.get("/users/me", {
         headers: {
           Authorization: `Bearer ${access_token}`,
@@ -46,13 +43,13 @@ const LoginPage = () => {
 
       const user = profileRes.data;
 
-      // Save both token and user in localStorage
+      // Save in localStorage
       localStorage.setItem("user", JSON.stringify({ access_token, user }));
 
-      // Update auth context
+      // Login to context (same structure expected by useAuth)
       authLogin({ access_token, user });
 
-      // Navigate depending on role
+      // Navigate
       if (user.is_admin) {
         navigate("/admin");
       } else {
@@ -67,7 +64,8 @@ const LoginPage = () => {
     } finally {
       setLoading(false);
     }
-  }
+
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">

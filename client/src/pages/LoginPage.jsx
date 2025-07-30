@@ -24,7 +24,6 @@ const LoginPage = () => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
     try {
       const formData = new URLSearchParams();
       formData.append("username", form.email);
@@ -37,10 +36,10 @@ const LoginPage = () => {
       authLogin({ access_token, user });
 
       if (user.is_admin) {
-      navigate("/admin");
-    } else {
-      navigate("/home");
-    }
+        navigate("/admin");
+      } else {
+        navigate("/home");
+      }
     } catch (err) {
       console.error("Login error:", err);
       const errorMessage = Array.isArray(err.response?.data?.detail)

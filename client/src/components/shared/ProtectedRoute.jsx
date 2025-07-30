@@ -1,7 +1,7 @@
 // src/components/shared/ProtectedRoute.jsx
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext"; // ✅ fixed path
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();

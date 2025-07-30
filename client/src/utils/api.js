@@ -12,7 +12,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const user = JSON.parse(localStorage.getItem("user"));
-    const token = user?.token;
+    const token = user?.access_token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -29,9 +29,14 @@ api.interceptors.response.use(
       localStorage.removeItem("user");
       window.location.href = "/login";
     }
+    
     return Promise.reject(error);
   }
 );
+export const logout = () => {
+  localStorage.removeItem("user");
+  window.location.href = "/login";
+};
 
 // ---------------------------------------------
 // ✅ AUTH

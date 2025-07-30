@@ -33,7 +33,7 @@ const LoginPage = () => {
       const res = await login(formData);
       const { access_token, user } = res.data;
 
-      localStorage.setItem("user", JSON.stringify({ access_token }));
+      localStorage.setItem("user", JSON.stringify({ access_token, user }));
       authLogin({ access_token, user });
 
       navigate("/home");

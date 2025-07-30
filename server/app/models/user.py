@@ -4,8 +4,6 @@ import datetime
 import uuid
 from typing import List
 
-
-
 from sqlalchemy import DateTime, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -14,6 +12,7 @@ from app.db import Base
 class User(Base):
     __tablename__ = "users"
 
+    
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String, unique=True, nullable=False)
@@ -21,8 +20,8 @@ class User(Base):
     is_verified: Mapped[bool] = mapped_column(Boolean, default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.utcnow)
 
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.utcnow)
 
 
     posts: Mapped[List["Report"]] = relationship(
@@ -31,9 +30,10 @@ class User(Base):
         cascade="all, delete"
     )
 
+    
     comments: Mapped[List["Comment"]] = relationship(
         "Comment",
-        back_populates="user",
+        back_populates="user",  
         cascade="all, delete",
         foreign_keys="Comment.created_by"
     )

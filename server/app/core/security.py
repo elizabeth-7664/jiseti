@@ -48,15 +48,12 @@ def create_verify_token(email: str, expires_delta: Optional[timedelta] = None) -
     to_encode = {"sub": email, "exp": expire}
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-def confirm_verify_token(token: str) -> str:
+def confirm_verify_token(token: str) -> Optional[str]:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get("sub")
-        if not email:
-            raise ValueError("Invalid payload")
-        return email
+        return payload.get("sub")  # email
     except JWTError:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
+        return None
 
 
 # =================== Authenticated User Dependency ===================
@@ -78,4 +75,3 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         if not user or not user.is_verified:
             raise HTTPException(status_code=401, detail="Unauthorized")
         return user
-    await db.refresh(user)

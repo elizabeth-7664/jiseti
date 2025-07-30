@@ -8,13 +8,58 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Add JWT token from localStorage to headers
+// api.interceptors.request.use(
+//   (config) => {
+//     const user = JSON.parse(localStorage.getItem("user"));
+//     const token = user?.token;
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
 
+// // Global response error handler (e.g., JWT expired)
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       localStorage.removeItem("user");
+//       window.location.href = "/login";
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 api.interceptors.request.use(
   (config) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = user?.access_token;
+    const userString = localStorage.getItem("user");
+    let token = null;
+
+    console.log("Interceptor: Attempting to get user from localStorage. Raw string:", userString); // LOG 1
+
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        // --- CHANGE THIS LINE ---
+        token = user?.access_token; // <--- Changed from user?.token to user?.access_token
+        // ------------------------
+
+        console.log("Interceptor: Parsed user object. Token found:", !!token); // LOG 2
+        if (token) {
+            console.log("Interceptor: Token starts with:", token.substring(0, 10) + '...'); // LOG 3
+        }
+      } catch (e) {
+        console.error("Interceptor: Error parsing 'user' from localStorage:", e); // LOG 4
+      }
+    }
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log("Interceptor: Authorization header set."); // LOG 5
+    } else {
+      console.warn("Interceptor: No valid token found to set Authorization header."); // LOG 6
     }
     return config;
   },
@@ -33,11 +78,6 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-export const logout = () => {
-  localStorage.removeItem("user");
-  window.location.href = "/login";
-};
-
 // ---------------------------------------------
 // ✅ AUTH
 // ---------------------------------------------

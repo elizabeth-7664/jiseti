@@ -1,3 +1,4 @@
+// src/utils/utils.js
 // Format a date (e.g., for displaying post/report timestamps)
 export function formatDate(dateStr) {
   const date = new Date(dateStr);

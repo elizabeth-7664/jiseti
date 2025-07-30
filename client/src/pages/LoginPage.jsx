@@ -1,14 +1,14 @@
+// src/pages/LoginPage.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import { login } from "../utils/api";
-import { useAuth } from "../context/AuthContext";
-import api from "../utils/api";
+import { useAuth } from "../context/AuthContext"; // Ensure useAuth is correctly imported
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login: authLogin } = useAuth();
+  const { login: authLogin } = useAuth(); // Destructure login from useAuth and alias it to authLogin
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
@@ -31,30 +31,31 @@ const LoginPage = () => {
       formData.append("username", form.email);
       formData.append("password", form.password);
 
-      const res = await login(formData); // this returns the access_token only
-      const { access_token } = res.data;
+      const res = await login(formData);
+      const { access_token, user } = res.data; // <-- The user object is available here!
 
-      // Fetch user data
-      const profileRes = await api.get("/users/me", {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-
-      const user = profileRes.data;
-
-      // Save in localStorage
-      localStorage.setItem("user", JSON.stringify({ access_token, user }));
-
-      // Login to context (same structure expected by useAuth)
-      authLogin({ access_token, user });
-
-      // Navigate
-      if (user.is_admin) {
-        navigate("/admin");
-      } else {
-        navigate("/home");
+      // --- ADD THESE CONSOLE LOGS HERE ---
+      console.log("Login API Response User Object:", user);
+      if (user) {
+        console.log("Is user admin?", user.is_admin);
+        console.log("User role (if applicable):", user.role); // Log user.role too, just in case
       }
+      // --- END CONSOLE LOGS ---
+
+      // Store token (or whatever your authLogin expects for token)
+      localStorage.setItem("user", JSON.stringify({ access_token })); // Or directly store user info if needed for persistence
+
+      // Call authLogin to update context state with user details (including is_admin)
+      authLogin({ access_token, user }); // Pass the full user object to update context
+
+      // --- ADD THIS CONDITIONAL NAVIGATION LOGIC ---
+      if (user && user.is_admin) {
+        navigate("/admin-dashboard"); // Redirect to admin dashboard
+      } else {
+        navigate("/"); // Redirect to homepage for regular users
+      }
+      // --- END CONDITIONAL NAVIGATION LOGIC ---
+
     } catch (err) {
       console.error("Login error:", err);
       const errorMessage = Array.isArray(err.response?.data?.detail)

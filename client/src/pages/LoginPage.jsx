@@ -50,7 +50,7 @@ const LoginPage = () => {
 
       // --- ADD THIS CONDITIONAL NAVIGATION LOGIC ---
       if (user && user.is_admin) {
-        navigate("/admin-dashboard"); // Redirect to admin dashboard
+        navigate("/admin"); // Redirect to admin dashboard
       } else {
         navigate("/"); // Redirect to homepage for regular users
       }

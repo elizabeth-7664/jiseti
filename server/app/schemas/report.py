@@ -3,6 +3,7 @@ from typing import Optional
 from uuid import UUID
 from datetime import datetime
 from app.models.report import ReportStatus, RecordType
+from app.models.report import ReportStatus, RecordType
 
 
 class ReportBase(BaseModel):
@@ -11,6 +12,7 @@ class ReportBase(BaseModel):
     location: Optional[str] = Field(None, example="Nairobi")
     latitude: Optional[float] = Field(None, example=-1.2921)
     longitude: Optional[float] = Field(None, example=36.8219)
+    category: RecordType = Field(..., example="red-flag")
     category: RecordType = Field(..., example="red-flag")
 
 
@@ -39,9 +41,11 @@ class LocationUpdate(BaseModel):
 class ReportOut(ReportBase):
     id: UUID
     status: ReportStatus = Field(..., example="draft")
+    status: ReportStatus = Field(..., example="draft")
     created_at: datetime
     updated_at: datetime
 
     class Config:
         orm_mode = True
+        use_enum_values = True  
         use_enum_values = True  

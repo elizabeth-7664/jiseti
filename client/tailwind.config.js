@@ -1,17 +1,20 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}", // Crucial!
   ],
   theme: {
     extend: {
       colors: {
-        primary: "#2563EB", // Jiseti blue
-        danger: "#DC2626",  // For red-flags
-        success: "#16A34A", // For resolved
-        warning: "#F59E0B", // For 'under investigation'
+        primary: "#2E86AB",
+        accent: "#F26419",
+        secondary: "#144552",
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+    require('tailwind-scrollbar'), // you're using `scrollbar-thin`
+  ],
 }

@@ -1,7 +1,17 @@
 import uuid
+import uuid
 import datetime
 from typing import List
 from typing import TYPE_CHECKING
+
+from sqlalchemy import ForeignKey, Text, String, Float
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Enum as PgEnum
+
+
+from app.db import Base
+
+import enum
 
 from sqlalchemy import ForeignKey, Text, String, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -35,8 +45,16 @@ class Report(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     category: Mapped[RecordType] = mapped_column(PgEnum(RecordType, name="recordtype"), nullable=False)
+    category: Mapped[RecordType] = mapped_column(PgEnum(RecordType, name="recordtype"), nullable=False)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
+    longitude: Mapped[float] = mapped_column(Float, nullable=False)
+
+    status: Mapped[ReportStatus] = mapped_column(PgEnum(ReportStatus, name="reportstatus"), default=ReportStatus.DRAFT)
+
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        default=datetime.datetime.utcnow
+    )
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
 
     status: Mapped[ReportStatus] = mapped_column(PgEnum(ReportStatus, name="reportstatus"), default=ReportStatus.DRAFT)
@@ -48,10 +66,22 @@ class Report(Base):
         default=datetime.datetime.utcnow,
         onupdate=datetime.datetime.utcnow
     )
+        default=datetime.datetime.utcnow,
+        onupdate=datetime.datetime.utcnow
+    )
 
     author_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
     author: Mapped["User"] = relationship("User", back_populates="posts")
 
+    comments: Mapped[List["Comment"]] = relationship(
+        "Comment", back_populates="report", cascade="all, delete"
+    )
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification", back_populates="report", cascade="all, delete-orphan"
+    )
+    media: Mapped[List["Media"]] = relationship(
+        back_populates="report", cascade="all, delete", lazy="selectin"
+    )
     comments: Mapped[List["Comment"]] = relationship(
         "Comment", back_populates="report", cascade="all, delete"
     )

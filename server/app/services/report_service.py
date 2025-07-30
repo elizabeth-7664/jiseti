@@ -52,6 +52,9 @@ async def create_report(
         location=report_in.location,
         latitude=latitude,
         longitude=longitude,
+        location=report_in.location,
+        latitude=latitude,
+        longitude=longitude,
         author_id=current_user.id
     )
 
@@ -64,6 +67,14 @@ async def create_report(
 
 
 async def get_all_reports(db: AsyncSession) -> List[Report]:
+    result = await db.execute(
+        select(Report)
+        .options(
+            selectinload(Report.author),
+            selectinload(Report.media),
+            selectinload(Report.comments)
+        )
+    )
     result = await db.execute(
         select(Report)
         .options(
@@ -118,10 +129,12 @@ async def update_report_status(
     db: AsyncSession,
     report_id: UUID,
     location: LocationUpdate,
+    location: LocationUpdate,
     current_user: User
 ) -> Report:
     report = await get_report_by_id(db, report_id)
 
+    if report.author_id != current_user.id:
     if report.author_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

@@ -1,79 +1,139 @@
-// src/services/api.ts
 import axios from "axios";
 
-const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://127.0.0.1:8000",
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
+
+// Create Axios instance
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
 });
 
-// Attach Bearer token if available
-API.interceptors.request.use(
-  (req) => {
-    const user = JSON.parse(localStorage.getItem("user") || "null");
-    if (user?.access_token) {
-      req.headers.Authorization = `Bearer ${user.access_token}`;
-      console.log("Attached token from localStorage:", user.access_token); // Debug
-    } else {
-      console.warn("No access token found in localStorage");
+// Add JWT token from localStorage to headers
+// api.interceptors.request.use(
+//   (config) => {
+//     const user = JSON.parse(localStorage.getItem("user"));
+//     const token = user?.token;
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
+
+// // Global response error handler (e.g., JWT expired)
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       localStorage.removeItem("user");
+//       window.location.href = "/login";
+//     }
+//     return Promise.reject(error);
+//   }
+// );
+api.interceptors.request.use(
+  (config) => {
+    const userString = localStorage.getItem("user");
+    let token = null;
+
+    console.log("Interceptor: Attempting to get user from localStorage. Raw string:", userString); // LOG 1
+
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        // --- CHANGE THIS LINE ---
+        token = user?.access_token; // <--- Changed from user?.token to user?.access_token
+        // ------------------------
+
+        console.log("Interceptor: Parsed user object. Token found:", !!token); // LOG 2
+        if (token) {
+            console.log("Interceptor: Token starts with:", token.substring(0, 10) + '...'); // LOG 3
+        }
+      } catch (e) {
+        console.error("Interceptor: Error parsing 'user' from localStorage:", e); // LOG 4
+      }
     }
-    return req;
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log("Interceptor: Authorization header set."); // LOG 5
+    } else {
+      console.warn("Interceptor: No valid token found to set Authorization header."); // LOG 6
+    }
+    return config;
   },
   (error) => Promise.reject(error)
 );
 
-// ================== AUTH ==================
-export const register = (data) => API.post("/api/auth/register", data);
-export const login = (data) =>
-  API.post("/auth/login", data, {
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  });
-export const verifyEmail = (token) =>
-  API.get(`/api/auth/verify-email?token=${token}`);
-export const fetchCurrentUser = () =>
-  API.get("/users/me").catch((err) => {
-    if (err.response?.status === 404) {
-      console.warn("Endpoint /users/me not available, using fallback");
-      return Promise.resolve({ data: { id: null, full_name: "Guest" } });
+// Global response error handler (e.g., JWT expired)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("user");
+      window.location.href = "/login";
     }
-    throw err;
-  });
+    return Promise.reject(error);
+  }
+);
+// ---------------------------------------------
+// ✅ AUTH
+// ---------------------------------------------
+export const login = (data) => api.post("/auth/login", data);
+export const register = (data) => api.post("/auth/register", data);
+export const forgotPassword = (data) => api.post("/auth/forgot-password", data);
+export const resetPassword = (data) => api.post("/auth/reset-password", data);
+export const checkDb = () => api.get("/auth/check-db");
 
-// ================== REPORTS ==================
-export const createReport = (data) => API.post("/create-report", data);
-export const fetchReports = () => API.get("/api/get-reports");
-export const fetchReportById = (id) => API.get(`/report/${id}`);
-export const updateReportStatus = (id, status) =>
-  API.patch(`/report/${id}/status`, { status });
+// ---------------------------------------------
+// ✅ REPORTS
+// ---------------------------------------------
+export const getReports = () => api.get("/reports/");
+export const getReport = (id) => api.get(`/reports/${id}`);
+export const createReport = (data) => api.post("/reports/", data);
+export const updateReport = (id, data) => api.put(`/reports/${id}`, data);
+export const deleteReport = (id) => api.delete(`/reports/${id}`);
+export const updateReportLocation = (id, data) => api.patch(`/reports/${id}/location`, data);
 
-// ================== USERS (ADMIN) ==================
-export const fetchAllUsers = () => API.get("/admin/users");
-export const deleteUser = (userId) => API.delete(`/admin/users/${userId}`);
-
-// ================== USER RECORDS ==================
-export const getUserRecords = (userId) =>
-  API.get(`/users/${userId}`).catch((err) => {
-    if (err.response?.status === 404) {
-      console.warn("Endpoint /users/:id not available");
-      return Promise.resolve({ data: [] });
-    }
-    throw err;
-  });
-
-// ================== COMMENTS ==================
-export const fetchComments = (reportId) => API.get(`/comments/${reportId}`);
-export const createComment = (reportId, data) =>
-  API.post(`/comments/${reportId}`, data);
-
-// ================== NOTIFICATIONS ==================
-export const createNotification = (data) => API.post("/notifications/", data);
-export const fetchUserNotifications = (userId) =>
-  API.get(`/notifications/user/${userId}`);
-
-// ================== MEDIA ==================
+// ---------------------------------------------
+// ✅ MEDIA
+// ---------------------------------------------
 export const uploadMedia = (formData) =>
-  API.post("/media/upload", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
+  api.post("/media/upload", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
 
-export default API;
+export const deleteMedia = (mediaId) => api.delete(`/media/${mediaId}`);
+export const getReportMedia = (reportId) => api.get(`/media/report/${reportId}`);
+
+// ---------------------------------------------
+// ✅ COMMENTS
+// ---------------------------------------------
+export const postComment = (reportId, data) => api.post(`/comments/${reportId}`, data);
+export const getComments = (reportId) => api.get(`/comments/${reportId}`);
+
+// ---------------------------------------------
+// ✅ NOTIFICATIONS
+// ---------------------------------------------
+export const createNotification = (data) => api.post("/notifications/", data);
+export const getUserNotifications = (userId) => api.get(`/notifications/user/${userId}`);
+
+// ---------------------------------------------
+// ✅ ADMIN
+// ---------------------------------------------
+export const getUsers = () => api.get("/admin/users");
+export const deleteUser = (userId) => api.delete(`/admin/users/${userId}`);
+export const updateReportStatus = (reportId, statusData) =>
+  api.patch(`/admin/reports/${reportId}/status`, statusData);
+
+// ---------------------------------------------
+// ✅ GENERIC UTILS (Optional for flexibility)
+// ---------------------------------------------
+export const get = (url, config = {}) => api.get(url, config);
+export const post = (url, data, config = {}) => api.post(url, data, config);
+export const put = (url, data, config = {}) => api.put(url, data, config);
+export const del = (url, config = {}) => api.delete(url, config);
+
+// Default export
+export default api;

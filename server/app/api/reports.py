@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
+from typing import List
 from typing import List
 
 from app.db import get_db
@@ -11,6 +12,8 @@ from app.schemas.report import ReportCreate, ReportOut, ReportUpdate
 from app.models.user import User
 from app.core.security import get_current_user
 from app.services import report_service
+
+router = APIRouter(prefix="/api/reports", tags=["Reports"])
 
 router = APIRouter(prefix="/api/reports", tags=["Reports"])
 
@@ -35,7 +38,9 @@ async def update_report(
 # Get all reports
 @router.get("/", response_model=List[ReportOut])
 async def get_all_reports(db: AsyncSession = Depends(get_db)):
+async def get_all_reports(db: AsyncSession = Depends(get_db)):
     return await report_service.get_all_reports(db)
+
 
 
 @router.get("/{report_id}", response_model=ReportOut)

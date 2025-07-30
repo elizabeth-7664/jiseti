@@ -24,5 +24,6 @@ async def send_email(subject: str, email_to: str, body: str):
         body=body,
         subtype="html"
     )
+
     fm = FastMail(conf)
     await fm.send_message(message)

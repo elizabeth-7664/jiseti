@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 from datetime import datetime
-from app.models.report import ReportStatus, RecordType
+from app.models.report import ReportStatus, RecordType 
+from app.schemas.media import MediaOut
 
 
 class ReportBase(BaseModel):
@@ -40,6 +41,7 @@ class ReportOut(ReportBase):
     status: ReportStatus = Field(..., example="draft")
     created_at: datetime
     updated_at: datetime
+    media: List[MediaOut] = []
 
     class Config:
         orm_mode = True

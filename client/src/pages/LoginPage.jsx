@@ -52,7 +52,7 @@ const LoginPage = () => {
       if (user && user.is_admin) {
         navigate("/admin"); // Redirect to admin dashboard
       } else {
-        navigate("/"); // Redirect to homepage for regular users
+        navigate("/home"); // Redirect to homepage for regular users
       }
       // --- END CONDITIONAL NAVIGATION LOGIC ---
 

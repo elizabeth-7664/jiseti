@@ -1,4 +1,5 @@
 // src/utils/api.js
+
 import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
@@ -12,14 +13,9 @@ const api = axios.create({
 // Add JWT token from localStorage to headers
 api.interceptors.request.use(
   (config) => {
-    // --- CRITICAL FIX: Get token directly from the 'access_token' key in localStorage ---
     const token = localStorage.getItem("access_token");
-    // --- END CRITICAL FIX ---
-
-    // The 'user' item in localStorage should now hold the full user object (id, username, is_admin, etc.),
-    // not the token. This is useful for logging/debugging, but not for setting the Authorization header directly.
     const userString = localStorage.getItem("user");
-    let user = null; // For logging/debugging purposes only in the interceptor
+    let user = null;
     if (userString) {
       try {
         user = JSON.parse(userString);
@@ -28,10 +24,9 @@ api.interceptors.request.use(
       }
     }
 
-    // Updated console logs to reflect the new storage strategy
     console.log("Interceptor: Attempting to get token from localStorage ('access_token' key). Raw token:", token);
     console.log("Interceptor: User object (from 'user' key, for info):", user);
-    console.log("Interceptor: Token found:", !!token); // Check if token string exists
+    console.log("Interceptor: Token found:", !!token);
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -49,14 +44,14 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // If 401 (Unauthorized), remove stored user data and redirect to login
       localStorage.removeItem("user");
-      localStorage.removeItem("access_token"); // Also remove the token
+      localStorage.removeItem("access_token");
       window.location.href = "/login";
     }
     return Promise.reject(error);
   }
 );
+
 // ---------------------------------------------
 // ✅ AUTH
 // ---------------------------------------------
@@ -108,10 +103,12 @@ export const getUserNotifications = (userId) => api.get(`/notifications/user/${u
 // ---------------------------------------------
 // ✅ ADMIN
 // ---------------------------------------------
-export const getUsers = () => api.get("/admin/users"); // This already gets all users
+export const getUsers = () => api.get("/admin/users");
 export const deleteUser = (userId) => api.delete(`/admin/users/${userId}`);
-export const updateReportStatus = (reportId, statusData) =>
+export const updateReportStatus = (reportId, statusData) => // <--- ADD THIS NEW FUNCTION
   api.patch(`/admin/reports/${reportId}/status`, statusData);
+//export const updateReportStatus = (reportId, statusData) =>
+  //api.patch(`/admin/reports/${reportId}/status`, statusData);
 
 // ---------------------------------------------
 // ✅ GENERIC UTILS (Optional for flexibility)

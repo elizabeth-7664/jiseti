@@ -6,6 +6,7 @@ from app.api.comments import router as comment_router
 from app.api.reports import router as report_router
 # from app.api.notifications import router as notification_router
 from app.models import * 
+from app.api import reports
 
 
 import os
@@ -47,4 +48,5 @@ app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(admin)
 app.include_router(comment_router)
 app.include_router(report_router)
+app.include_router(reports.router, prefix="/api/reports", tags=["Reports"])
 #app.include_router(notification_router)

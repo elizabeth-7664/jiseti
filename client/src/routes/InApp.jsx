@@ -28,7 +28,7 @@ const InApp = () => {
       <main className="min-h-screen bg-background text-foreground p-4">
         <Routes>
           {/* Public Landing Page */}
-          <Route path="/landing" element={<LandingPage />} />
+          <Route path="/" element={<LandingPage />} />
 
           {/* Protected Routes */}
           <Route

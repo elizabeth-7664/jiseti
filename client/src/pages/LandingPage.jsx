@@ -68,15 +68,12 @@ const LandingPage = () => {
                             {/* Buttons */}
                             <div className="bg-white/90 px-6 py-5 rounded-xl shadow-lg w-full flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                                 <Button
-                                    // No 'size' prop in your Button component, rely on className for sizing/padding
-                                    // Override the primary variant's blue with green colors
                                     className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 w-full sm:w-auto"
                                     onClick={() => navigate("/register")}
                                 >
                                     Get Started
                                 </Button>
                                 <Button
-                                    // No 'variant="outline"' in your Button component, create the outline look with className
                                     className="border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white font-semibold py-3 px-6 w-full sm:w-auto"
                                     onClick={() => navigate("/login")}
                                 >

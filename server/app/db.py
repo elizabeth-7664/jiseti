@@ -6,7 +6,7 @@ from app.core.config.settings import settings
 DATABASE_URL = settings.DATABASE_URL
 
 
-async_engine = create_async_engine(DATABASE_URL, echo=True)
+async_engine = create_async_engine(DATABASE_URL, echo=False)
 
 
 AsyncSessionLocal = async_sessionmaker(

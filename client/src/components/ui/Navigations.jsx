@@ -2,6 +2,7 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+
 import Button from "../ui/Button"; // Ensure Button component is imported
 
 export default function Navigations() {

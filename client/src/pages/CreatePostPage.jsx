@@ -1,4 +1,3 @@
-// src/pages/CreatePostPage.jsx
 import React from "react";
 import RecordForm from "../components/post/RecordForm";
 import { useNavigate } from "react-router-dom";

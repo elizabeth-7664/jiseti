@@ -1,12 +1,11 @@
 import React from 'react';
+import Navigations from '../ui/Navigations'; // Import your Navigations component
 
 const Header = () => {
   return (
-    <header className="w-full p-4 bg-white border-b flex justify-between items-center shadow-sm">
-      <h1 className="text-xl font-bold text-primary">Jiseti</h1>
-      <div>
-        {/* Add user avatar or logout link here */}
-      </div>
+    <header className="w-full">
+      <Navigations />
+
     </header>
   );
 };

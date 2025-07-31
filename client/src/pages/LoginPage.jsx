@@ -50,7 +50,6 @@ const LoginPage = () => {
         console.log("Is user admin?", user.is_admin);
         console.log("User role (if applicable):", user.role);
       }
-      // --- END CONSOLE LOGS ---
 
       // Call authLogin to update context state with both the token and the user details
       authLogin({ access_token, user });

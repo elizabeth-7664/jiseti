@@ -1,55 +1,100 @@
-// src/components/ReportTable.jsx
 import React from "react";
-// Assuming these imports are correct based on your project structure
-// import PostStatusBadge from "./PostStatusBadge"; // If needed here
-// import Button from "./Button"; // If needed here
-// import { Eye } from "lucide-react"; // If needed here
 
 export default function ReportTable({ reports, users = [], isAdmin = false }) {
-  // Defensive programming: Ensure reports is an array or default to empty array
   const reportsToDisplay = reports || [];
 
-  // userMap should also be handled defensively, though 'users = []' already helps.
-  // If users is truly an array of objects with 'id' and 'name' this is fine.
   const userMap = Object.fromEntries((users || []).map((u) => [u.id, u.name]));
 
   return (
-    <table className="w-full border-collapse border text-sm">
-      <thead className="bg-green-100 text-green-900">
-        <tr>
-          <th className="border p-2">Title</th>
-          <th className="border p-2">Type</th>
-          <th className="border p-2">Urgency</th>
-          <th className="border p-2">Status</th>
-          <th className="border p-2">Date</th>
-          {isAdmin && <th className="border p-2">User</th>}
-        </tr>
-      </thead>
-      <tbody>
-        {reportsToDisplay.length === 0 ? ( // Optional: Add a message if no reports
+    <div className="overflow-x-auto shadow-lg rounded-lg border border-gray-200 dark:border-gray-700">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
-            <td colSpan={isAdmin ? "6" : "5"} className="border p-2 text-center text-gray-500">
-              No reports available.
-            </td>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider dark:text-gray-300"
+            >
+              Title
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider dark:text-gray-300"
+            >
+              Type
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider dark:text-gray-300"
+            >
+              Urgency
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider dark:text-gray-300"
+            >
+              Status
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider dark:text-gray-300"
+            >
+              Date
+            </th>
+            {isAdmin && (
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider dark:text-gray-300"
+              >
+                User
+              </th>
+            )}
           </tr>
-        ) : (
-          // Use reportsToDisplay instead of reports directly
-          reportsToDisplay.map((r) => (
-            <tr key={r.id}>
-              <td className="border p-2">{r.title}</td>
-              <td className="border p-2 capitalize">{r.type}</td>
-              <td className="border p-2 capitalize">{r.urgency}</td>
-              <td className="border p-2 capitalize">{r.status}</td>
-              <td className="border p-2">
-                {new Date(r.created_at).toLocaleString()}
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
+          {reportsToDisplay.length === 0 ? (
+            <tr>
+              <td
+                colSpan={isAdmin ? 6 : 5}
+                className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500 dark:text-gray-400"
+              >
+                No reports available.
               </td>
-              {isAdmin && (
-                <td className="border p-2">{userMap[r.user_id] || "Unknown"}</td>
-              )}
             </tr>
-          ))
-        )}
-      </tbody>
-    </table>
+          ) : (
+            reportsToDisplay.map((r, index) => (
+              <tr
+                key={r.id}
+                className={
+                  index % 2 === 0
+                    ? "bg-gray-50 dark:bg-gray-800"
+                    : "bg-white dark:bg-gray-900"
+                }
+              >
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                  {r.title}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 capitalize">
+                  {r.type}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 capitalize">
+                  {r.urgency}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300 capitalize">
+                  {r.status}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                  {new Date(r.created_at).toLocaleString()}
+                </td>
+                {isAdmin && (
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                    {userMap[r.user_id] || "Unknown"}
+                  </td>
+                )}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }

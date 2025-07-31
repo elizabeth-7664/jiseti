@@ -5,7 +5,7 @@ import { getUsers, getReports, updateReportStatus, deleteUser, deleteReport } fr
 import Spinner from "../components/ui/Spinner";
 import Alert from "../components/ui/Alert";
 import { useNavigate } from "react-router-dom";
-import {AdminActions } from "../components/admin/AdminActions";
+import { AdminActions } from "../components/admin/AdminActions";
 import AdminPostTable from "../components/admin/AdminPostTable";
 import PostReviewPanel from "../components/admin/PostReviewPanel";
 import PostStatusTimeline from "../components/admin/PostStatusTimeline";
@@ -59,7 +59,7 @@ const AdminDashboardPage = () => {
     setLoadingPosts(true);
     setError(null);
     try {
-      const response = await getReports();
+      const response = await getReports(); // Reverted to original
       setPosts(response.data);
     } catch (err) {
       console.error("Failed to fetch posts:", err);
@@ -113,60 +113,73 @@ const AdminDashboardPage = () => {
   };
 
   const handleActionSubmit = async ({ reportId, status, comment }) => {
-    // Placeholder: Replace with actual API call for post status update
     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
     setSuccessMessage(`Post ${status} with comment: ${comment}`);
-    setSelectedPost(null); // Reset selected post after action
+    setSelectedPost(null);
   };
 
   const handleViewPost = (post) => setSelectedPost(post);
 
   if (!isAuthenticated || !user?.is_admin) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-950">
-        <div className="text-center py-6 text-gray-900 dark:text-white">Redirecting...</div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-100 to-white dark:from-gray-900 dark:to-gray-950">
+        <div className="text-center py-6 px-4 bg-white/80 dark:bg-gray-800/80 rounded-xl shadow-lg text-gray-900 dark:text-white">
+          Redirecting...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-gray-950">
-      <div className="py-6">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-center text-gray-900 dark:text-white mb-8 tracking-tight font-serif">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 min-h-screen">
+      <div className="py-8">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-10 tracking-tight font-serif">
           Admin Dashboard
         </h1>
 
         {successMessage && (
-          <Alert type="success" message={successMessage} onDismiss={() => setSuccessMessage(null)} className="mb-6 p-3 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400" />
+          <Alert
+            type="success"
+            message={successMessage}
+            onDismiss={() => setSuccessMessage(null)}
+            className="mb-6 p-4 rounded-xl shadow-md animate-fade-in bg-green-50 dark:bg-green-900/50 text-green-700 dark:text-green-200 border-l-4 border-green-500"
+          />
         )}
         {error && (
-          <Alert type="error" message={error} onDismiss={() => setError(null)} className="mb-6 p-3 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400" />
+          <Alert
+            type="error"
+            message={error}
+            onDismiss={() => setError(null)}
+            className="mb-6 p-4 rounded-xl shadow-md animate-fade-in bg-red-50 dark:bg-red-900/50 text-red-700 dark:text-red-200 border-l-4 border-red-500"
+          />
         )}
 
-        <section className="mb-8" aria-labelledby="posts-heading">
-          <h2 id="posts-heading" className="text-2xl sm:text-3xl font-semibold text-gray-800 dark:text-gray-200 mb-6 font-serif">
+        <section className="mb-10" aria-labelledby="posts-heading">
+          <h2 id="posts-heading" className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6 border-b-2 border-blue-200 dark:border-blue-800 pb-2">
             Manage Posts
           </h2>
           {loadingPosts ? (
-            <div className="flex justify-center">
-              <Spinner className="h-8 w-8 text-blue-500" />
+            <div className="flex justify-center items-center h-32 bg-white/50 dark:bg-gray-800/50 rounded-xl shadow-inner">
+              <Spinner className="h-10 w-10 text-blue-600 dark:text-blue-400" />
             </div>
           ) : (
-            <div className="space-y-4">
-              <AdminPostTable posts={posts} onView={handleViewPost} />
+            <div className="space-y-6">
+              <AdminPostTable posts={posts} onView={handleViewPost} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg" />
               {selectedPost && (
-                <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-800/50 p-6">
-                  <h3 className="text-xl font-semibold mb-4">Review Post: {selectedPost.title}</h3>
-                  <PostStatusTimeline currentStatus={selectedPost.status} />
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-6 space-y-6">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Review Post: {selectedPost.title}</h3>
+                  <PostStatusTimeline currentStatus={selectedPost.status} className="border-b border-gray-200 dark:border-gray-700 pb-4" />
                   <PostReviewPanel
                     postId={selectedPost.id}
                     initialStatus={selectedPost.status}
                     onStatusUpdated={(updated) => setPosts(posts.map(p => p.id === updated.id ? updated : p))}
+                    className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg"
                   />
                   <AdminActions
                     reportId={selectedPost.id}
                     currentStatus={selectedPost.status}
                     onActionSubmit={handleActionSubmit}
+                    className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg"
                   />
                 </div>
               )}
@@ -174,47 +187,49 @@ const AdminDashboardPage = () => {
           )}
         </section>
 
-        <section className="mb-8" aria-labelledby="reports-heading">
-          <h2 id="reports-heading" className="text-2xl sm:text-3xl font-semibold text-gray-800 dark:text-gray-200 mb-6 font-serif">
+        <section className="mb-10" aria-labelledby="reports-heading">
+          <h2 id="reports-heading" className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6 border-b-2 border-blue-200 dark:border-blue-800 pb-2">
             Manage Reports
           </h2>
           {loadingReports ? (
-            <div className="flex justify-center">
-              <Spinner className="h-8 w-8 text-blue-500" />
+            <div className="flex justify-center items-center h-32 bg-white/50 dark:bg-gray-800/50 rounded-xl shadow-inner">
+              <Spinner className="h-10 w-10 text-blue-600 dark:text-blue-400" />
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-800/50 p-6 overflow-hidden">
-              <ReportTable reports={reports} users={users} isAdmin={true} />
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-6 overflow-hidden">
+              <ReportTable reports={reports} users={users} isAdmin={true} className="w-full" />
             </div>
           )}
         </section>
 
-        <section className="mb-8" aria-labelledby="users-heading">
-          <h2 id="users-heading" className="text-2xl sm:text-3xl font-semibold text-gray-800 dark:text-gray-200 mb-6 font-serif">
+        <section className="mb-10" aria-labelledby="users-heading">
+          <h2 id="users-heading" className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6 border-b-2 border-blue-200 dark:border-blue-800 pb-2">
             Manage Users
           </h2>
           {loadingUsers ? (
-            <div className="flex justify-center">
-              <Spinner className="h-8 w-8 text-blue-500" />
+            <div className="flex justify-center items-center h-32 bg-white/50 dark:bg-gray-800/50 rounded-xl shadow-inner">
+              <Spinner className="h-10 w-10 text-blue-600 dark:text-blue-400" />
             </div>
           ) : users.length === 0 ? (
-            <p className="text-center text-gray-600 dark:text-gray-400">No users found.</p>
+            <div className="text-center text-gray-600 dark:text-gray-400 py-6 bg-white/50 dark:bg-gray-800/50 rounded-xl shadow-md">
+              No users found.
+            </div>
           ) : (
-            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-800/50 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead className="bg-gray-50 dark:bg-gray-800">
+                  <thead className="bg-gray-100 dark:bg-gray-700">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Username</th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Admin</th>
-                      <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Username</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Admin</th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {users.map((u) => (
-                      <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
+                      <tr key={u.id} className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{u.id.substring(0, 8)}...</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{u.username}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{u.email}</td>
@@ -223,7 +238,7 @@ const AdminDashboardPage = () => {
                           {u.id !== user.id && (
                             <button
                               onClick={() => handleDeleteUser(u.id)}
-                              className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors duration-200"
+                              className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors duration-200 px-3 py-1 rounded-md"
                               aria-label={`Delete user ${u.username}`}
                             >
                               Delete

@@ -32,6 +32,7 @@ export default function PostListPage() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">All Reports</h1>
           <Button onClick={() => navigate("/create-post")} className="bg-red-600 hover:bg-red-700 text-white">
+
             + Add New Report
           </Button>
         </div>

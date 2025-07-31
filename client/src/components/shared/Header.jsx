@@ -1,3 +1,4 @@
+
 // src/components/shared/Header.jsx
 import React from 'react';
 import Navigations from '../ui/Navigations'; // Import your Navigations component
@@ -11,8 +12,10 @@ const Header = () => {
     // For now, we'll keep it as a wrapper as requested.
     <header className="w-full">
       <Navigations />
+
     </header>
   );
 };
 
 export default Header;
+

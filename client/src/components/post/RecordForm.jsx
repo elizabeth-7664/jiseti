@@ -1,4 +1,3 @@
-// src/components/post/RecordForm.jsx
 import React, { useState, useEffect } from "react";
 import MapPicker from "./MapPicker"; // Assuming MapPicker exists
 import PostMediaUploader from "./PostMediaUploader"; // Assuming PostMediaUploader exists
@@ -46,21 +45,26 @@ const RecordForm = ({ onSuccess, onCancel }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!formData.coordinates && !formData.location.trim()) {
       toast.error("Please provide a location (either on map or as text).");
       return;
     }
     try {
       setSubmitting(true);
+
       const payload = {
         title: formData.title,
         description: formData.description,
         category: formData.category,
+
         location: formData.location.trim() || null,
+
         latitude: formData.coordinates ? formData.coordinates.lat : null,
         longitude: formData.coordinates ? formData.coordinates.lng : null,
         media: formData.media,
       };
+
       const response = await createReport(payload);
       if (typeof onSuccess === "function") {
         onSuccess(response.data);
@@ -72,6 +76,7 @@ const RecordForm = ({ onSuccess, onCancel }) => {
       setFormData(initialForm);
     } catch (err) {
       toast.error("Failed to submit report. Please try again.");
+
       console.error("Submission error:", err);
     } finally {
       setSubmitting(false);
@@ -79,6 +84,7 @@ const RecordForm = ({ onSuccess, onCancel }) => {
   };
 
   return (
+
     <form
       onSubmit={handleSubmit}
       className="p-10 bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-800/50 max-w-4xl mx-auto transition-all duration-300"
@@ -232,6 +238,7 @@ const RecordForm = ({ onSuccess, onCancel }) => {
           </Button>
         )}
       </div>
+
     </form>
   );
 };

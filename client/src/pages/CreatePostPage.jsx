@@ -11,7 +11,7 @@ export default function CreatePostPage() {
   };
 
   const handleReportSubmitted = (newReport) => {
-    navigate(`/reports/${newReport.id}`); // Navigate to the detail view of the new report
+    navigate(`/posts/${newReport.id}`); // Navigate to the detail view of the new report
   };
 
   return (

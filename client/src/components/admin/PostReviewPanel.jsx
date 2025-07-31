@@ -1,10 +1,10 @@
 // src/components/post/admin/PostReviewPanel.jsx
 import React, { useState } from "react";
-import  Button  from "./components/ui/Button";
-import  Textarea  from "./components/ui/Textarea";
-import  {updatePostStatus } from "../utils/api";
+import Button from "../ui/Button";
+import Textarea from "../ui/Textarea";
+import { updateReportStatus } from "../../utils/api";
 
-const statusOptions = ["pending", "under investigation", "resolved", "rejected"];
+const statusOptions = ["draft", "under-investigation", "resolved", "rejected"];
 
 const PostReviewPanel = ({ postId, initialStatus, onStatusUpdated }) => {
   const [status, setStatus] = useState(initialStatus);
@@ -14,7 +14,7 @@ const PostReviewPanel = ({ postId, initialStatus, onStatusUpdated }) => {
   const handleStatusChange = async (newStatus) => {
     setLoading(true);
     try {
-      const updated = await updatePostStatus(postId, {
+      const updated = await updateReportStatus(postId, {
         status: newStatus,
         admin_notes: notes,
       });
@@ -43,7 +43,7 @@ const PostReviewPanel = ({ postId, initialStatus, onStatusUpdated }) => {
             disabled={loading}
             onClick={() => handleStatusChange(option)}
           >
-            {option}
+            {option.replace(/-/g, " ")} {/* Display with spaces for readability */}
           </Button>
         ))}
       </div>

@@ -69,7 +69,7 @@ export default function HomePage() {
                         interventions, fostering transparency and accountability.
                     </p>
                     <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-                        <Link to="/create">
+                        <Link to="/create-post">
                             <Button size="lg" className="w-full sm:w-auto">
                                 Report Corruption
                             </Button>
@@ -96,7 +96,8 @@ export default function HomePage() {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {reports.slice(0, 6).map((report) => (
-                                <Link to={`/reports/${report.id}`} key={report.id} className="block">
+								<Link to={`/posts/${report.id}`} key={report.id} className="block">
+
                                     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 h-full flex flex-col hover:shadow-xl transition-all duration-300">
                                         {report.image_url && report.image_url.split(',')[0] ? (
                                             <div className="mb-4 rounded-md overflow-hidden">

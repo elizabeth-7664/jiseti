@@ -1,9 +1,9 @@
-// src/components/post/PostDetail.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { formatDate } from '../../utils/utils'; // Import your formatDate utility
+import { formatDate } from '../../utils/utils';
+import Comments from './Comments'; // Correct import
 
 // Fix for default Leaflet icon issue with Webpack
 delete L.Icon.Default.prototype._getIconUrl;
@@ -14,6 +14,8 @@ L.Icon.Default.mergeOptions({
 });
 
 const PostDetail = ({ post }) => {
+  const [commentCount, setCommentCount] = useState(0); // ✅ new state
+
   if (!post) {
     return <div className="text-center text-gray-500 dark:text-gray-400">No post data available.</div>;
   }
@@ -78,23 +80,21 @@ const PostDetail = ({ post }) => {
         )}
       </div>
 
-      {/* NEW: Media Section - Adjustments made here */}
       {post.media && post.media.length > 0 && (
         <div className="mb-8">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Media</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {post.media.map((mediaItem, index) => (
               <div key={index} className="relative w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden shadow-md">
-                {/* Use mediaItem.file_type and mediaItem.file_url */}
                 {mediaItem.file_type && mediaItem.file_type.startsWith('image/') ? (
                   <img
-                    src={mediaItem.file_url} // Changed from .url to .file_url
+                    src={mediaItem.file_url}
                     alt={`Media ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
                 ) : mediaItem.file_type && mediaItem.file_type.startsWith('video/') ? (
                   <video
-                    src={mediaItem.file_url} // Changed from .url to .file_url
+                    src={mediaItem.file_url}
                     controls
                     className="w-full h-full object-cover"
                   >
@@ -106,12 +106,10 @@ const PostDetail = ({ post }) => {
                     <a href={mediaItem.file_url} target="_blank" rel="noopener noreferrer" className="ml-1 text-primary-500 hover:underline">Download</a>
                   </div>
                 )}
-                {/* Optional: Display filename or other info - assuming 'filename' might still come from upload,
-                    if not, you might need to use `file_url` and parse it or add a 'filename' to MediaOut schema */}
-                {mediaItem.filename && ( // If 'filename' is not in MediaOut, this won't show
-                    <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-tr-lg">
-                        {mediaItem.filename}
-                    </div>
+                {mediaItem.filename && (
+                  <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-tr-lg">
+                    {mediaItem.filename}
+                  </div>
                 )}
               </div>
             ))}
@@ -119,10 +117,12 @@ const PostDetail = ({ post }) => {
         </div>
       )}
 
-      {/* Comments Section */}
+      {/* ✅ Comments Section */}
       <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Comments</h2>
-        <p className="text-gray-600 dark:text-gray-400">No comments yet. Be the first to comment!</p>
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+          Comments ({commentCount})
+        </h2>
+        <Comments reportId={post.id} onCountChange={setCommentCount} />
       </div>
     </div>
   );

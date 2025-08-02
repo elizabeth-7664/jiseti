@@ -9,7 +9,7 @@ class CommentBase(BaseModel):
 
 
 class CommentCreate(CommentBase):
-    pass
+    content: str 
 
 
 class CommentUpdate(BaseModel):

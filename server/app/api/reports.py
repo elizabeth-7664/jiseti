@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from typing import List
@@ -24,8 +24,12 @@ async def create_report(
 
 
 @router.get("/", response_model=List[ReportOut])
-async def get_all_reports(db: AsyncSession = Depends(get_db)):
-    return await report_service.get_all_reports(db)
+async def get_all_reports(
+    db: AsyncSession = Depends(get_db),
+    skip: int = Query(0, ge=0, description="Number of items to skip"),
+    limit: int = Query(10, ge=1, le=100, description="Maximum number of items to return")
+):
+    return await report_service.get_all_reports(db, skip=skip, limit=limit)
 
 
 @router.get("/{report_id}", response_model=ReportOut)

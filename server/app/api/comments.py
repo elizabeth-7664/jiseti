@@ -12,7 +12,7 @@ from typing import List
 from uuid import UUID
 
 router = APIRouter(
-    prefix="/comments",
+    prefix="/api/comments",
     tags=["Comments"]
 )
 

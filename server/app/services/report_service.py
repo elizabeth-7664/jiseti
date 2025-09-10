@@ -56,7 +56,7 @@ async def get_report_by_id(db: AsyncSession, report_id: UUID):
 async def update_report(db: AsyncSession, report_id: UUID, report_in: ReportUpdate, current_user: User):
     report = await get_report_by_id(db, report_id)
 
-    if report.user_id != current_user.id and not current_user.is_admin:
+    if report.author_id != current_user.id and not current_user.is_admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to update this report")
 
     for field, value in report_in.dict(exclude_unset=True).items():
@@ -70,7 +70,7 @@ async def update_report(db: AsyncSession, report_id: UUID, report_in: ReportUpda
 async def update_report_location(db: AsyncSession, report_id: UUID, location: LocationUpdate, current_user: User):
     report = await get_report_by_id(db, report_id)
 
-    if report.user_id != current_user.id and not current_user.is_admin:
+    if report.author_id != current_user.id and not current_user.is_admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to update location")
 
     report.location_name = location.location_name
@@ -85,7 +85,7 @@ async def update_report_location(db: AsyncSession, report_id: UUID, location: Lo
 async def delete_report(db: AsyncSession, report_id: UUID, current_user: User):
     report = await get_report_by_id(db, report_id)
 
-    if report.user_id != current_user.id and not current_user.is_admin:
+    if report.author_id != current_user.id and not current_user.is_admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized to delete this report")
 
     await db.delete(report)

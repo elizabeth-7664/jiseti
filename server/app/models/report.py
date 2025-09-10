@@ -68,5 +68,5 @@ class Report(Base):
         "Notification", back_populates="report", cascade="all, delete-orphan"
     )
     media: Mapped[List["Media"]] = relationship(
-        back_populates="report", cascade="all, delete", lazy="selectin"
+        "Media", back_populates="report", cascade="all, delete-orphan", lazy="selectin"
     )

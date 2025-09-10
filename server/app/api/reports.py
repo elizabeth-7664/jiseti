@@ -20,6 +20,7 @@ async def create_report(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    print("Incoming Report:", report_in.dict())
     return await report_service.create_report(db, report_in, current_user)
 
 

@@ -13,18 +13,27 @@ async def create_report(db: AsyncSession, report_in: ReportCreate, current_user:
     new_report = Report(
         title=report_in.title,
         description=report_in.description,
-        report_type=report_in.report_type,
-        location_name=report_in.location_name,
+        category=report_in.category,  # Changed from report_type
+        location=report_in.location,  # Changed from location_name
         latitude=report_in.latitude,
         longitude=report_in.longitude,
-        media_urls=report_in.media_urls,
-        user_id=current_user.id
+        author_id=current_user.id,  # Changed from user_id
+        #status=ReportStatus.DRAFT  # Explicitly set default status
     )
     db.add(new_report)
     await db.commit()
+    # Handle media if provided
+    if report_in.media:
+        for media_item in report_in.media:
+            media = Media(
+                report_id=new_report.id,
+                url=media_item.get("url"),
+                type=media_item.get("type")
+            )
+            db.add(media)
+    await db.commit()
     await db.refresh(new_report)
     return new_report
-
 
 async def get_all_reports(db: AsyncSession, skip: int = 0, limit: int = 10):
     result = await db.execute(

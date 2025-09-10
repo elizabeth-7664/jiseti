@@ -1,6 +1,6 @@
 # app/schemas/report.py
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import Optional, List
 import uuid
 from datetime import datetime
@@ -15,9 +15,15 @@ class ReportBase(BaseModel):
     longitude: Optional[float] = Field(None, example=36.8219)
     category: RecordType = Field(..., example="red-flag")
 
+    @validator("category", pre=True)
+    def normalize_category(cls, v):
+        if isinstance(v, str):
+            return v.lower().replace("_", "-")
+        return v
+
 
 class ReportCreate(ReportBase):
-    pass
+     media: Optional[List[MediaOut]] = [] 
 
 
 class ReportUpdate(BaseModel):
@@ -27,6 +33,12 @@ class ReportUpdate(BaseModel):
     latitude: Optional[float]
     longitude: Optional[float]
     category: Optional[RecordType]
+
+    @validator("category", pre=True)
+    def normalize_category(cls, v):
+        if isinstance(v, str):
+            return v.lower().replace("_", "-")
+        return v
 
     class Config:
         orm_mode = True

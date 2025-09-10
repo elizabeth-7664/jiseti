@@ -37,12 +37,18 @@ class Report(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
-    category: Mapped[RecordType] = mapped_column(PgEnum(RecordType, name="recordtype"), nullable=False)
+    category: Mapped[RecordType] = mapped_column(
+    PgEnum(RecordType, name="recordtype", values_callable=lambda obj: [e.value for e in obj]),
+    nullable=False
+)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
     latitude: Mapped[float] = mapped_column(Float, nullable=False)
     longitude: Mapped[float] = mapped_column(Float, nullable=False)
 
-    status: Mapped[ReportStatus] = mapped_column(PgEnum(ReportStatus, name="reportstatus"), default=ReportStatus.DRAFT)
+    status: Mapped[ReportStatus] = mapped_column(
+    PgEnum(ReportStatus, name="reportstatus", values_callable=lambda obj: [e.value for e in obj]),
+    default=ReportStatus.DRAFT
+)
 
     created_at: Mapped[datetime.datetime] = mapped_column(
         default=datetime.datetime.utcnow

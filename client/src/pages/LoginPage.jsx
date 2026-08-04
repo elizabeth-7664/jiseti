@@ -157,7 +157,7 @@ const LoginPage = () => {
         <p className="text-sm text-center text-gray-600 dark:text-gray-400 mt-4">
           Don’t have an account?{" "}
           <Link
-            to="/sign_up"
+            to="/register"
             className="underline text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200"
             aria-label="Navigate to sign up page"
           >

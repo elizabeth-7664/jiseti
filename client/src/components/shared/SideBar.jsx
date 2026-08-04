@@ -4,8 +4,8 @@ import { NavLink } from "react-router-dom";
 import { Shield, FilePlus, LayoutDashboard, User } from "lucide-react";
 
 const links = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/reports", label: "Reports", icon: FilePlus },
+  { to: "/home", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/posts", label: "Reports", icon: FilePlus },
   { to: "/admin", label: "Admin Panel", icon: Shield },
   { to: "/profile", label: "Profile", icon: User },
 ];

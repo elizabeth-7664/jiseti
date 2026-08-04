@@ -10,7 +10,7 @@ export default function Navigations() {
 
   const handleLogout = () => {
     logout(); // Call the logout function from AuthContext
-    navigate("/sign_in"); // Redirect to login page after logout
+    navigate("/login"); // Redirect to login page after logout
   };
 
   return (
@@ -23,10 +23,10 @@ export default function Navigations() {
         {/* Links for unauthenticated users */}
         {!isAuthenticated && (
           <>
-            <Link to="/sign_in">
+            <Link to="/login">
               <Button variant="ghost" size="sm">Login</Button>
             </Link>
-            <Link to="/sign_up">
+            <Link to="/register">
               <Button size="sm">Register</Button>
             </Link>
           </>
@@ -35,7 +35,7 @@ export default function Navigations() {
         {/* Links for authenticated users */}
         {isAuthenticated && (
           <>
-            <Link to="/dashboard">
+            <Link to="/home">
               <Button variant="ghost" size="sm">Dashboard</Button>
             </Link>
             {/* Assuming user.is_admin is the correct property for admin check */}

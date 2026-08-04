@@ -22,7 +22,7 @@ const AdminRoute = ({ children }) => {
   // 3. If user is logged in but not an admin, redirect to unauthorized/homepage
   //    Assuming your backend user object has an 'is_admin' boolean
   if (!user.is_admin) {
-    return <Navigate to="/unauthorized" replace />; // Redirect to an unauthorized page (recommended)
+    return <Navigate to="/home" replace />; // Redirect to an unauthorized page (recommended)
     // Or: return <Navigate to="/" replace />; // Redirect to homepage
   }
 

@@ -1,31 +1,18 @@
 // components/shared/DarkModeToggle.jsx
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useTheme } from "../../context/ThemeContext";
 
 export default function DarkModeToggle() {
-  const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem("theme") === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-  });
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [isDark]);
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
 
   return (
     <button
-      onClick={() => setIsDark(!isDark)}
-      className="rounded-full p-2 transition-colors hover:bg-muted"
-      aria-label="Toggle Dark Mode"
+      onClick={toggleTheme}
+      className="rounded-full p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
-      {isDark ? <Sun size={20} /> : <Moon size={20} />}
+      {isDark ? <Sun size={20} className="text-amber-400" /> : <Moon size={20} className="text-gray-600" />}
     </button>
   );
 }

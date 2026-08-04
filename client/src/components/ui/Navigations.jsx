@@ -14,8 +14,8 @@ export default function Navigations() {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-800 shadow-md dark:shadow-lg p-4 md:px-8 flex justify-between items-center rounded-b-lg">
-      <Link to="/" className="text-2xl font-bold text-red-700 dark:text-red-500 hover:text-red-800 dark:hover:text-red-400 transition-colors duration-200">
+    <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 p-4 md:px-8 flex justify-between items-center transition-all">
+      <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent hover:from-emerald-500 hover:to-teal-400 transition-all duration-200 tracking-tight font-display">
         Jiseti
       </Link>
 

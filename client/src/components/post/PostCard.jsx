@@ -1,9 +1,11 @@
 import React from "react";
-import { motion } from "framer-motion"; // For animations
-import { MapPin, Calendar } from "lucide-react"; // For icons
+import { motion } from "framer-motion";
+import { MapPin, Calendar, Edit2, Trash2, AlertTriangle, Activity } from "lucide-react";
 
 const Postcard = ({ post, onEdit, onDelete }) => {
   const {
+    id,
+    _id,
     type,
     title,
     description,
@@ -14,147 +16,131 @@ const Postcard = ({ post, onEdit, onDelete }) => {
     created_at,
   } = post;
 
-  // Animation variants for the card
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
-    hover: { scale: 1.02, boxShadow: "0 10px 20px rgba(0, 0, 0, 0.1)" },
-  };
+  const postId = id || _id || Math.random().toString(36).substr(2, 9);
+
+  // Formatted date
+  const formattedDate = new Date(created_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+
+  const isRedFlag = type === "red-flag";
+  const categoryColor = isRedFlag ? "bg-rose-500" : "bg-blue-500";
+  const categoryBg = isRedFlag ? "bg-rose-500/10 text-rose-600 border-rose-500/20" : "bg-blue-500/10 text-blue-600 border-blue-500/20";
+  const CategoryIcon = isRedFlag ? AlertTriangle : Activity;
 
   return (
     <motion.div
-      className="relative bg-white rounded-xl shadow-lg overflow-hidden p-6 mb-4 border border-gray-100 hover:border-accent transition-all duration-300"
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
-      whileHover="hover"
+      id={`post-${postId}`}
+      className="relative bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6 group"
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
       role="article"
-      aria-labelledby={`post-title-${title}`}
+      aria-labelledby={`post-title-${postId}`}
     >
-      {/* Header Section */}
-      <div className="flex justify-between items-center mb-3">
-        <span className="text-sm font-bold uppercase text-primary tracking-wide">
-          {type === "red-flag" ? "Red Flag" : "Intervention"}
-        </span>
-        <span
-          className={`text-xs font-medium px-3 py-1 rounded-full ${statusColor(status)} shadow-sm`}
-          aria-label={`Status: ${status}`}
-        >
-          {status.replace("-", " ")}
-        </span>
-      </div>
+      {/* Left Accent Border */}
+      <div className={`absolute top-0 left-0 w-1.5 h-full ${categoryColor}`} />
 
-      {/* Title and Description */}
-      <h2
-        id={`post-title-${title}`}
-        className="text-xl font-semibold text-gray-800 mb-2 line-clamp-2"
-      >
-        {title}
-      </h2>
-      <p className="text-sm text-gray-600 mb-4 line-clamp-3" aria-describedby="post-description">
-        {description}
-      </p>
-
-      {/* Geolocation and Date */}
-      {(lat || lng) && (
-        <div className="flex items-center text-sm text-gray-500 mb-4">
-          <MapPin className="w-4 h-4 mr-1 text-accent" aria-hidden="true" />
-          <span>
-            {lat && lng ? `${lat.toFixed(4)}, ${lng.toFixed(4)}` : "Location not specified"}
+      <div className="p-6 pl-8">
+        {/* Header Section */}
+        <div className="flex justify-between items-start mb-4">
+          <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border ${categoryBg}`}>
+            <CategoryIcon className="w-3.5 h-3.5" />
+            {isRedFlag ? "Red Flag" : "Intervention"}
+          </div>
+          <span
+            className={`text-xs font-medium px-3 py-1 rounded-full border ${statusColor(status)} shadow-sm`}
+            aria-label={`Status: ${status}`}
+          >
+            {status ? status.replace("-", " ") : "Unknown"}
           </span>
         </div>
-      )}
-      <div className="flex items-center text-sm text-gray-500 mb-4">
-        <Calendar className="w-4 h-4 mr-1 text-accent" aria-hidden="true" />
-        <span>{new Date(created_at).toLocaleDateString()}</span>
-      </div>
 
-      {/* Media Section */}
-      {media.length > 0 && (
-        <div className="mb-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Media</h3>
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-accent scrollbar-track-gray-100">
-            {media.map((src, i) => (
-              <motion.img
-                key={i}
-                src={src}
-                alt={`Media ${i + 1} for ${title}`}
-                className="h-24 w-24 object-cover rounded-md border border-gray-200"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
-              />
-            ))}
+        {/* Title and Description */}
+        <h2
+          id={`post-title-${postId}`}
+          className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight"
+        >
+          {title}
+        </h2>
+        <p className="text-sm text-gray-600 mb-5 line-clamp-3 leading-relaxed" aria-describedby="post-description">
+          {description}
+        </p>
+
+        {/* Meta Info */}
+        <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-gray-500 mb-5">
+          <div className="flex items-center bg-gray-50 px-2.5 py-1.5 rounded-md">
+            <Calendar className="w-3.5 h-3.5 mr-1.5 text-gray-400" aria-hidden="true" />
+            <span>{formattedDate}</span>
           </div>
+          {(lat || lng) && (
+            <div className="flex items-center bg-gray-50 px-2.5 py-1.5 rounded-md">
+              <MapPin className="w-3.5 h-3.5 mr-1.5 text-gray-400" aria-hidden="true" />
+              <span>
+                {lat && lng ? `${Number(lat).toFixed(4)}, ${Number(lng).toFixed(4)}` : "Location"}
+              </span>
+            </div>
+          )}
         </div>
-      )}
 
-      {/* Action Buttons */}
-      <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-        <motion.button
-          onClick={onEdit}
-          className="flex items-center text-sm font-medium text-accent hover:text-secondary transition-colors duration-200"
-          whileHover={{ x: 2 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label={`Edit post: ${title}`}
-        >
-          <svg
-            className="w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-            />
-          </svg>
-          Edit
-        </motion.button>
-        <motion.button
-          onClick={onDelete}
-          className="flex items-center text-sm font-medium text-red-600 hover:text-red-700 transition-colors duration-200"
-          whileHover={{ x: 2 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label={`Delete post: ${title}`}
-        >
-          <svg
-            className="w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-          Delete
-        </motion.button>
+        {/* Media Section */}
+        {media && media.length > 0 && (
+          <div className="mb-5">
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              {media.map((src, i) => (
+                <motion.img
+                  key={i}
+                  src={src}
+                  alt={`Media ${i + 1} for ${title}`}
+                  className="h-20 w-28 object-cover rounded-xl border border-gray-100 shadow-sm"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.2 }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex justify-end items-center gap-2 pt-4 border-t border-gray-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 focus-within:opacity-100">
+          {onEdit && (
+            <button
+              onClick={onEdit}
+              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+              title="Edit post"
+              aria-label={`Edit post: ${title}`}
+            >
+              <Edit2 className="w-4 h-4" />
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={onDelete}
+              className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors duration-200"
+              title="Delete post"
+              aria-label={`Delete post: ${title}`}
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
-
-      {/* Decorative Element */}
-      <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-primary to-accent" />
-    </div>
+    </motion.div>
   );
 };
 
 // Status color utility
 const statusColor = (status) => {
-  switch (status) {
+  if (!status) return "bg-gray-50 text-gray-700 border-gray-200";
+  switch (status.toLowerCase()) {
     case "resolved":
-      return "bg-green-100 text-green-800";
+      return "bg-emerald-50 text-emerald-700 border-emerald-200";
     case "rejected":
-      return "bg-red-100 text-red-800";
+      return "bg-rose-50 text-rose-700 border-rose-200";
     case "under-investigation":
-      return "bg-yellow-100 text-yellow-800";
+      return "bg-amber-50 text-amber-700 border-amber-200";
     default:
-      return "bg-gray-100 text-gray-800";
+      return "bg-gray-50 text-gray-700 border-gray-200";
   }
 };
 

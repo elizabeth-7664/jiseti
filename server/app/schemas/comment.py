@@ -6,21 +6,21 @@ from uuid import UUID
 
 class CommentBase(BaseModel):
     content: str
-
+    parent_id: Optional[UUID] = None
 
 class CommentCreate(CommentBase):
-    content: str 
-
+    pass
 
 class CommentUpdate(BaseModel):
     content: Optional[str] = None
-
 
 class CommentOut(CommentBase):
     id: UUID
     report_id: UUID
     created_by: Optional[UUID]
     created_at: datetime
+    is_edited: bool
+    parent_id: Optional[UUID] = None
 
     class Config:
         orm_mode = True

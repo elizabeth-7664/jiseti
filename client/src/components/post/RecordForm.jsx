@@ -273,7 +273,7 @@ const RecordForm = ({ onSuccess, onCancel }) => {
           <motion.div 
             className="h-full bg-blue-600"
             initial={{ width: "0%" }}
-            animate={{ width: \`\${((currentStep - 1) / (steps.length - 1)) * 100}%\` }}
+            animate={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
             transition={{ duration: 0.3 }}
           />
         </div>
@@ -284,15 +284,15 @@ const RecordForm = ({ onSuccess, onCancel }) => {
             return (
               <div key={step.id} className="flex flex-col items-center">
                 <div
-                  className={\`w-10 h-10 rounded-full flex items-center justify-center border-4 transition-colors duration-300 \${
+                  className={`w-10 h-10 rounded-full flex items-center justify-center border-4 transition-colors duration-300 ${
                     isActive
                       ? "bg-blue-600 border-white dark:border-gray-900 text-white shadow-md"
                       : "bg-gray-200 dark:bg-gray-700 border-white dark:border-gray-900 text-gray-400"
-                  }\`}
+                  }`}
                 >
                   <Icon className="w-4 h-4" />
                 </div>
-                <span className={\`mt-2 text-xs font-semibold \${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}\`}>
+                <span className={`mt-2 text-xs font-semibold ${isActive ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}`}>
                   {step.title}
                 </span>
               </div>

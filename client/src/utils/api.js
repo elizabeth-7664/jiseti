@@ -86,6 +86,8 @@ export const getReportMedia = (reportId) => api.get(`/media/report/${reportId}`)
 // ---------------------------------------------
 export const postComment = (reportId, data) => api.post(`/comments/${reportId}`, data);
 export const getComments = (reportId) => api.get(`/comments/${reportId}`);
+export const updateComment = (commentId, data) => api.put(`/comments/${commentId}`, data);
+export const deleteComment = (commentId) => api.delete(`/comments/${commentId}`);
 
 // ---------------------------------------------
 // ✅ NOTIFICATIONS

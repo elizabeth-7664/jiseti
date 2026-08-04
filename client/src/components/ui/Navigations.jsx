@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import Button from "../ui/Button"; // Ensure Button component is imported
+import DarkModeToggle from "../shared/DarkModeToggle";
 
 export default function Navigations() {
   const { user, isAuthenticated, logout } = useContext(AuthContext); // Re-include 'logout'
@@ -53,6 +54,7 @@ export default function Navigations() {
             >
               Logout
             </Button>
+            <DarkModeToggle />
           </>
         )}
       </div>

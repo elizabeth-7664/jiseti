@@ -1,10 +1,10 @@
 // src/components/post/PostForm.jsx
 import React, { useState } from "react";
-import  Button  from "@/components/ui/button";
-import  Input  from "@/components/ui/input";
-import  Textarea  from "@/components/ui/textarea";
-import PostMediaUpload from "./PostMediaUpload";
-import PostMapPicker from "./PostMapPicker";
+import  Button  from "../ui/Button";
+import  Input  from "../ui/Input";
+import  Textarea  from "../ui/Textarea";
+import PostMediaUploader from "./PostMediaUploader";
+import MapPicker from "./MapPicker";
 
 const PostForm = ({ initialData = {}, onSubmit, isSubmitting }) => {
   const [title, setTitle] = useState(initialData.title || "");
@@ -31,8 +31,8 @@ const PostForm = ({ initialData = {}, onSubmit, isSubmitting }) => {
         </select>
       </div>
 
-      <PostMediaUpload media={media} setMedia={setMedia} />
-      <PostMapPicker location={location} setLocation={setLocation} />
+      <PostMediaUploader media={media} setMedia={setMedia} />
+      <MapPicker location={location} setLocation={setLocation} />
 
       <Button type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Submitting..." : "Submit Report"}

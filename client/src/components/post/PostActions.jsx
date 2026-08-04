@@ -1,6 +1,6 @@
 // src/components/post/PostActions.jsx
 import React from "react";
-import  Button  from "./components/ui/button";
+import  Button  from "../ui/Button";
 import { Pencil, Trash2 } from "lucide-react";
 
 const PostActions = ({ canEdit, canDelete, onEdit, onDelete }) => {
@@ -13,7 +13,7 @@ const PostActions = ({ canEdit, canDelete, onEdit, onDelete }) => {
         </Button>
       )}
       {canDelete && (
-        <Button variant="destructive" size="sm" onClick={onDelete}>
+        <Button variant="danger" size="sm" onClick={onDelete}>
           <Trash2 className="w-4 h-4 mr-1" />
           Delete
         </Button>

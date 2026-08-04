@@ -1,5 +1,5 @@
 import React from "react";
-import clsx from "clsx"; // Optional: remove if you're not using clsx
+import clsx from "clsx";
 
 const Input = React.forwardRef(
   ({ label, type = "text", className, ...props }, ref) => {
@@ -17,7 +17,7 @@ const Input = React.forwardRef(
           ref={ref}
           type={type}
           className={clsx(
-            "px-4 py-2 rounded-md border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent",
+            "px-4 py-2 rounded-md border border-input bg-gray-50 dark:bg-gray-800/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors",
             className
           )}
           {...props}

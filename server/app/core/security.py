@@ -12,18 +12,26 @@ SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
+import bcrypt
+
 # Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
 
 # =================== Password Functions ===================
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    pw_bytes = password.encode('utf-8')[:72]
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(pw_bytes, salt).decode('utf-8')
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    pw_bytes = plain.encode('utf-8')[:72]
+    hashed_bytes = hashed.encode('utf-8')
+    try:
+        return bcrypt.checkpw(pw_bytes, hashed_bytes)
+    except Exception:
+        return False
 
 
 # =================== Access Token ===================

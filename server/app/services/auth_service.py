@@ -104,9 +104,13 @@ from app.db import async_engine
 
 
 async def register_user(user: UserCreate, db: AsyncSession):
-    existing_user = await db.execute(select(User).where(User.email == user.email))
-    if existing_user.scalars().first():
+    existing_user_email = await db.execute(select(User).where(User.email == user.email))
+    if existing_user_email.scalars().first():
         raise HTTPException(status_code=400, detail="Email already registered")
+
+    existing_user_name = await db.execute(select(User).where(User.username == user.username))
+    if existing_user_name.scalars().first():
+        raise HTTPException(status_code=400, detail="Username already taken")
 
     hashed_password = get_password_hash(user.password)
     new_user = User(
@@ -116,8 +120,12 @@ async def register_user(user: UserCreate, db: AsyncSession):
         is_verified=True
     )
     db.add(new_user)
-    await db.commit()
-    await db.refresh(new_user)
+    try:
+        await db.commit()
+        await db.refresh(new_user)
+    except Exception:
+        await db.rollback()
+        raise HTTPException(status_code=400, detail="Registration failed. Username or email already in use.")
 
     return {"msg": "User registered successfully."}
 

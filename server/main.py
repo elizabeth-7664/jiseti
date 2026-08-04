@@ -20,10 +20,22 @@ from app.utils.email_utils import send_email
 app = FastAPI()
 
 # CORS configuration
-origins = [os.getenv("FRONTEND_URL", "http://localhost:5173")]
+raw_frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+origins = [url.strip() for url in raw_frontend_url.split(",") if url.strip()]
+default_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+for default_origin in default_origins:
+    if default_origin not in origins:
+        origins.append(default_origin)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"http://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

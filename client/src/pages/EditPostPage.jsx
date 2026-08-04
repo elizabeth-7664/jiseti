@@ -32,7 +32,11 @@ export default function EditPostPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8 text-gray-900 dark:text-white">
       <div className="max-w-2xl mx-auto">
         <h2 className="text-2xl font-bold mb-6">Edit Report</h2>
-        <EditPost post={post} />
+        <EditPost 
+          post={post} 
+          onSave={(updatedPost) => navigate(`/posts/${updatedPost.id}`)}
+          onCancel={() => navigate(-1)} 
+        />
       </div>
     </div>
   )

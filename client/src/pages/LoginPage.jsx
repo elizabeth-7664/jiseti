@@ -38,16 +38,7 @@ const LoginPage = () => {
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      console.log("Login API Response - Full data:", res.data);
-      console.log("Login API Response - Extracted User Object:", user);
-      console.log("Login API Response - Extracted Access Token:", access_token);
-      console.log("User object stored in localStorage ('user' key):", localStorage.getItem("user"));
-      console.log("Token string stored in localStorage ('access_token' key):", localStorage.getItem("access_token"));
 
-      if (user) {
-        console.log("Is user admin?", user.is_admin);
-        console.log("User role (if applicable):", user.role);
-      }
 
       authLogin({ access_token, user });
 

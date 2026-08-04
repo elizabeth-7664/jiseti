@@ -24,15 +24,8 @@ api.interceptors.request.use(
       }
     }
 
-    console.log("Interceptor: Attempting to get token from localStorage ('access_token' key). Raw token:", token);
-    console.log("Interceptor: User object (from 'user' key, for info):", user);
-    console.log("Interceptor: Token found:", !!token);
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log("Interceptor: Authorization header set with token starting:", token.substring(0, 10) + '...');
-    } else {
-      console.warn("Interceptor: No valid token found to set Authorization header.");
     }
     return config;
   },

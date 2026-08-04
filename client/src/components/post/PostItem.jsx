@@ -32,9 +32,7 @@ const formatDate = (dateString) => {
 };
 
 const PostItem = ({ post }) => {
-  // --- ADDED THIS CONSOLE.LOG FOR DEBUGGING ---
-  console.log("DEBUG PostItem: Rendering post. Title:", post.title, "ID:", post.id);
-  // --- END DEBUG LOG ---
+
 
   return (
     <Link

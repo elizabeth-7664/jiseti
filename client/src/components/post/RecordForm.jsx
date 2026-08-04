@@ -22,14 +22,7 @@ const RecordForm = ({ onSuccess, onCancel }) => {
   const [formData, setFormData] = useState(initialForm);
   const [submitting, setSubmitting] = useState(false);
 
-  // Debugging: Log prop types
-  useEffect(() => {
-    console.log("RecordForm rendered. onSuccess prop type:", typeof onSuccess);
-    if (typeof onSuccess !== "function") {
-      console.error("RecordForm: onSuccess prop is NOT a function!", onSuccess);
-    }
-    console.log("RecordForm rendered. onCancel prop type:", typeof onCancel);
-  }, [onSuccess, onCancel]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,9 +57,6 @@ const RecordForm = ({ onSuccess, onCancel }) => {
       const response = await createReport(payload);
       if (typeof onSuccess === "function") {
         onSuccess(response.data);
-      } else {
-        console.error("RecordForm: onSuccess is not a function!", onSuccess);
-        toast.error("Form submitted, but callback failed. Check console.");
       }
       toast.success("Report submitted successfully!");
       setFormData(initialForm);

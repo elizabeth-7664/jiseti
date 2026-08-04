@@ -8,7 +8,7 @@ const ForgotPasswordPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // TODO: Trigger password reset email
-    console.log("Sending reset email to:", email);
+
   };
 
   return (

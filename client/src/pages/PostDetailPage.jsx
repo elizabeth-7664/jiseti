@@ -27,14 +27,14 @@ export default function PostDetailPage() {
         setLoading(false);
         return;
       }
-      console.log(`PostDetailPage: Attempting to call getReport with ID: ${id}`);
+
 
       // Fetch the report details
       const reportRes = await getReport(id);
       let reportData = reportRes.data;
 
       // Fetch the media separately
-      console.log(`PostDetailPage: Attempting to call getReportMedia with ID: ${id}`);
+
       const mediaRes = await getReportMedia(id);
       const mediaData = mediaRes.data;
 
@@ -54,7 +54,7 @@ export default function PostDetailPage() {
   const handleSave = async (updatedData) => {
     setIsSaving(true);
     try {
-      console.log("Attempting to update report:", id, updatedData);
+
       const res = await updateReport(id, updatedData);
       // After saving, you might want to reload the post and media to get fresh data
       await loadPostAndMedia(); // Reload to ensure media is updated if it was changed via edit form
